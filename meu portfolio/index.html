@@ -1,87 +1,275 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie-edge">
-    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="http://www.w3.org/2000/svg">
-    
-    <title>Novo Projeto</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Gestão de EPIs - App Responsivo</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+    body {
+        margin: 0;
+        background: #e9eef3;
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    /* AREA DO APP */
+    .app {
+        width: 100%;
+        max-width: 500px;     /* máximo em telas grandes */
+        min-height: 100vh;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0px 0px 25px rgba(0,0,0,0.15);
+    }
+
+    /* CABEÇALHO */
+    .header {
+        background: #007bff;
+        color: white;
+        padding: 18px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    /* CONTEÚDO */
+    .content {
+        padding: 18px;
+        flex: 1;
+    }
+
+    /* CARDS */
+    .card {
+        background: #ffffff;
+        padding: 18px;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 500;
+        display: block;
+        margin-top: 12px;
+    }
+
+    input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        margin-top: 5px;
+        font-size: 16px;
+        transition: .2s;
+    }
+
+    input:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0,123,255,0.3);
+    }
+
+    .epi-list label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+        font-weight: 400;
+    }
+
+    /* BOTÃO */
+    .btn {
+        width: 100%;
+        padding: 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-size: 18px;
+        margin-top: 20px;
+        font-weight: 600;
+        transition: .3s;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background: #005fc7;
+        transform: scale(1.02);
+    }
+
+    .worker-box {
+        padding: 14px;
+        background: #f7f8fc;
+        border-left: 5px solid #007bff;
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+
+    .epi-tag {
+        background: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 8px;
+        display: inline-block;
+        margin: 4px 4px 0 0;
+        font-size: 14px;
+    }
+
+    /* ----- RESPONSIVIDADE ------ */
+
+    /* CELULARES PEQUENOS */
+    @media (max-width: 360px) {
+        .header {
+            font-size: 19px;
+            padding: 14px;
+        }
+        .btn {
+            font-size: 16px;
+            padding: 14px;
+        }
+    }
+
+    /* TABLETS */
+    @media (min-width: 700px) {
+        .app {
+            max-width: 650px;
+            border-radius: 20px;
+        }
+    }
+
+    /* MONITOR GRANDE */
+    @media (min-width: 1200px) {
+        body {
+            background: linear-gradient(120deg, #c7d9ff, #eaf0ff);
+        }
+        .app {
+            max-width: 700px;
+        }
+    }
+
+</style>
 </head>
 <body>
-    
-    <nav>
-        <div class="container">
-            <div class="btn"></div>
+
+<div class="app">
+
+    <div class="header">Gestão de EPIs</div>
+
+    <div class="content">
+
+        <!-- CADASTRO -->
+        <div class="card">
+            <h2>Cadastrar Trabalhador</h2>
+
+            <label>Nome</label>
+            <input type="text" id="nome">
+
+            <label>Matrícula</label>
+            <input type="text" id="matricula">
+
+            <h3>EPIs Necessários</h3>
+
+            <div class="epi-list">
+                <label><input type="checkbox" class="epi" value="Bota" id="botaCheck"> Bota</label>
+
+                <div id="numeroBotaDiv" style="display:none; margin-left:20px;">
+                    <input type="number" id="numeroBota" placeholder="Número da bota">
+                </div>
+
+                <label><input type="checkbox" class="epi" value="Luva"> Luva</label>
+                <label><input type="checkbox" class="epi" value="Óculos"> Óculos</label>
+                <label><input type="checkbox" class="epi" value="Camisa"> Camisa</label>
+                <label><input type="checkbox" class="epi" value="Chapéu"> Chapéu</label>
+                <label><input type="checkbox" class="epi" value="Calça"> Calça</label>
+                <label><input type="checkbox" class="epi" value="Capa"> Capa</label>
+            </div>
+
+            <button class="btn" onclick="salvar()">Salvar Trabalhador</button>
         </div>
 
-        <div class="logo">
-            <h4 class="center">Portfólio</h4>
+        <!-- LISTA -->
+        <div class="card">
+            <h2>Trabalhadores Cadastrados</h2>
+            <div id="lista"></div>
         </div>
 
-        <div class="burger">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
-        </div>
+    </div>
+</div>
 
-        <ul class="nav-links">
-            <li><a href="#">Início</a></li>
-            <li><a href="#">Sobre</a></li>
-            <li><a href="#">Missão</a></li>
-            <li><a href="#">Portfólio</a></li>
-            <li><a href="#">Contatos</a></li>
-        </ul>
-    </nav>
-    
-    <div class="linha-1"></div>
-    
-    <div class="foto">
-         
-        <img src="fundo2.png" alt="" class="fundo"> 
-    </div>
-    
-    <div class="texto">
-        <p class="text-1">Olá, sou  </p>
-    </div>
-    
-    <div class="texto-2">
-        <h1 class="text-2">Luis Carlos :)</h1>
-    </div>
-    
-    <div class="texto-3">
-        <h2 class="text-3">Desenvolvedor Front - End</h2>
-    </div>
-    <div class="cv">
-       <a href="#" style="text-decoration:none;" class="a1"><div class="botao">Download CV</div></a>
-    </div>
+<script>
 
-    <div class="contato">
-       <a href="#" style="text-decoration:none;"><div class="botao2">Entrar em contato</div></a>
-    </div>
+let trabalhadores = JSON.parse(localStorage.getItem("trabalhadores")) || [];
 
-       <div class="sobre">
-        <div class="historia">
-              <h3>Sobre mim</h3>
-              
-        </div> 
-       </div>
-          <div><h4 style="color:rgb(104, 103, 103)  ; text-align: center; font-weight: 300;">Ola,meu nome e luiss e estou cursando <br>  egenharia da computação <br> esse Projeto "Portfólio" e apenas um trabalho da faculdade <br> a ser apresentado.</h4></div>
-             
-          <div class="h-5">
-                <h5>Habilidades</h5>
-          </div>
-          <div class="html-1">
-            <div class="html-2"><H5>HTML</H5></div>
-            <div class="html-2"><H5>CSS</H5></div>
-          </div>
-         
+mostrarLista();
+
+document.getElementById("botaCheck").addEventListener("change", () => {
+    document.getElementById("numeroBotaDiv").style.display =
+        document.getElementById("botaCheck").checked ? "block" : "none";
+});
+
+function salvar() {
+    const nome = document.getElementById("nome").value.trim();
+    const matricula = document.getElementById("matricula").value.trim();
+
+    const epis = [];
+    let numeroBota = "";
+
+    document.querySelectorAll(".epi:checked").forEach(e => epis.push(e.value));
+
+    if (document.getElementById("botaCheck").checked) {
+        numeroBota = document.getElementById("numeroBota").value.trim();
+    }
+
+    if (!nome || !matricula) {
+        alert("Preencha nome e matrícula!");
+        return;
+    }
+
+    trabalhadores.push({ nome, matricula, epis, numeroBota });
+
+    localStorage.setItem("trabalhadores", JSON.stringify(trabalhadores));
+
+    document.getElementById("nome").value = "";
+    document.getElementById("matricula").value = "";
+    document.querySelectorAll(".epi").forEach(e => e.checked = false);
+    document.getElementById("numeroBotaDiv").style.display = "none";
+    document.getElementById("numeroBota").value = "";
+
+    mostrarLista();
+}
+
+function mostrarLista() {
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
+
+    trabalhadores.forEach(t => {
+        let epiTags = t.epis.map(epi => `<span class="epi-tag">${epi}</span>`).join("");
+
+        if (t.numeroBota) {
+            epiTags += `<span class="epi-tag">Bota Nº ${t.numeroBota}</span>`;
+        }
+
+        lista.innerHTML += `
+            <div class="worker-box">
+                <b>Nome:</b> ${t.nome}<br>
+                <b>Matrícula:</b> ${t.matricula}<br><br>
+                <b>EPIs Necessários:</b><br>
+                ${epiTags}
+            </div>
+        `;
+    });
+}
+
+</script>
+
 </body>
-<script src="java.js"></script>
 </html>
