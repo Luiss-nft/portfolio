@@ -2,274 +2,264 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Gestão de EPIs - App Responsivo</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Cadastro de EPIs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
+    :root {
+        --azul: #1a73e8;
+        --azul-claro: #e8f0fe;
+        --cinza: #f5f5f5;
+        --text: #2c2c2c;
+    }
+
     body {
+        font-family: Arial, sans-serif;
+        background: var(--cinza);
         margin: 0;
-        background: #e9eef3;
-        font-family: "Poppins", sans-serif;
-        display: flex;
-        justify-content: center;
-        min-height: 100vh;
+        padding: 0;
+        color: var(--text);
     }
 
-    /* AREA DO APP */
-    .app {
-        width: 100%;
-        max-width: 500px;     /* máximo em telas grandes */
-        min-height: 100vh;
-        background: #ffffff;
+    /* ----------- MENU EM PASTAS ----------- */
+    nav {
         display: flex;
-        flex-direction: column;
-        box-shadow: 0px 0px 25px rgba(0,0,0,0.15);
+        background: #dcdcdc;
+        padding: 6px;
+        border-bottom: 3px solid var(--azul);
     }
 
-    /* CABEÇALHO */
-    .header {
-        background: #007bff;
-        color: white;
-        padding: 18px;
+    .tab {
+        flex: 1;
+        padding: 12px 0;
+        margin: 0 4px;
         text-align: center;
-        font-size: 22px;
-        font-weight: 600;
-        position: sticky;
-        top: 0;
+        font-weight: bold;
+        font-size: 17px;
+        border: none;
+        background: #e5e5e5;
+        color: #333;
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .tab.active {
+        background: white;
+        color: var(--azul);
+        border: 3px solid var(--azul);
+        border-bottom: none;
+        top: 3px;
+        position: relative;
         z-index: 10;
     }
 
-    /* CONTEÚDO */
-    .content {
-        padding: 18px;
-        flex: 1;
+    /* ----------- ÁREA DAS ABAS ----------- */
+    .page {
+        display: none;
+        padding: 16px;
     }
 
-    /* CARDS */
+    .page.active {
+        display: block;
+    }
+
+    /* ----------- FORMULÁRIO ----------- */
     .card {
-        background: #ffffff;
+        background: white;
         padding: 18px;
         border-radius: 14px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        box-shadow: 0 2px 6px #00000020;
         margin-bottom: 20px;
     }
 
-    label {
-        font-weight: 500;
-        display: block;
-        margin-top: 12px;
-    }
-
-    input[type="text"], input[type="number"] {
+    input[type="text"],
+    input[type="number"] {
         width: 100%;
-        padding: 14px;
-        border-radius: 12px;
-        border: 1px solid #ccc;
-        margin-top: 5px;
+        padding: 12px;
+        border: 2px solid #d0d0d0;
+        border-radius: 10px;
+        margin-bottom: 12px;
         font-size: 16px;
-        transition: .2s;
+        transition: 0.2s;
     }
 
     input:focus {
-        border-color: #007bff;
+        border-color: var(--azul);
         outline: none;
-        box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        background: var(--azul-claro);
     }
 
     .epi-list label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 6px;
-        font-weight: 400;
+        display: block;
+        padding: 8px 0;
+        font-size: 17px;
     }
 
-    /* BOTÃO */
-    .btn {
+    button.salvar {
         width: 100%;
-        padding: 16px;
-        background: #007bff;
-        color: white;
+        background: var(--azul);
         border: none;
-        border-radius: 14px;
-        font-size: 18px;
-        margin-top: 20px;
-        font-weight: 600;
-        transition: .3s;
-        cursor: pointer;
-    }
-
-    .btn:hover {
-        background: #005fc7;
-        transform: scale(1.02);
-    }
-
-    .worker-box {
         padding: 14px;
-        background: #f7f8fc;
-        border-left: 5px solid #007bff;
         border-radius: 12px;
-        margin-bottom: 12px;
-    }
-
-    .epi-tag {
-        background: #007bff;
         color: white;
-        padding: 5px 10px;
-        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.2s;
+    }
+
+    button.salvar:hover {
+        background: #0f5ccd;
+    }
+
+    /* ----------- LISTA ----------- */
+    .worker-card {
+        background: white;
+        padding: 14px;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px #00000030;
+        margin-bottom: 14px;
+    }
+
+    .worker-card p {
+        margin: 4px 0;
+        font-size: 16px;
+    }
+
+    .epi-item {
+        background: var(--azul-claro);
         display: inline-block;
-        margin: 4px 4px 0 0;
-        font-size: 14px;
-    }
-
-    /* ----- RESPONSIVIDADE ------ */
-
-    /* CELULARES PEQUENOS */
-    @media (max-width: 360px) {
-        .header {
-            font-size: 19px;
-            padding: 14px;
-        }
-        .btn {
-            font-size: 16px;
-            padding: 14px;
-        }
-    }
-
-    /* TABLETS */
-    @media (min-width: 700px) {
-        .app {
-            max-width: 650px;
-            border-radius: 20px;
-        }
-    }
-
-    /* MONITOR GRANDE */
-    @media (min-width: 1200px) {
-        body {
-            background: linear-gradient(120deg, #c7d9ff, #eaf0ff);
-        }
-        .app {
-            max-width: 700px;
-        }
+        padding: 4px 10px;
+        margin: 4px;
+        border-radius: 8px;
+        color: var(--azul);
+        font-weight: bold;
     }
 
 </style>
+
 </head>
 <body>
 
-<div class="app">
+<!-- MENU EM PASTAS -->
+<nav>
+    <button class="tab active" onclick="trocarAba('cadastro')">Cadastro</button>
+    <button class="tab" onclick="trocarAba('lista')">Trabalhadores</button>
+</nav>
 
-    <div class="header">Gestão de EPIs</div>
+<!-- PÁGINA CADASTRO -->
+<div id="cadastro" class="page active">
+    <div class="card">
+        <h2>Cadastro do Trabalhador</h2>
 
-    <div class="content">
+        <label>Nome</label>
+        <input type="text" id="nome">
 
-        <!-- CADASTRO -->
-        <div class="card">
-            <h2>Cadastrar Trabalhador</h2>
+        <label>Matrícula</label>
+        <input type="text" id="matricula">
 
-            <label>Nome</label>
-            <input type="text" id="nome">
+        <h3>EPIs Necessários:</h3>
+        <div class="epi-list">
 
-            <label>Matrícula</label>
-            <input type="text" id="matricula">
+            <label><input type="checkbox" id="bota" onchange="mostrarNumeroBota()"> Bota</label>
+            <input type="number" id="numBota" placeholder="Número da bota" style="display:none;">
 
-            <h3>EPIs Necessários</h3>
+            <label><input type="checkbox" id="luva"> Luva</label>
+            <label><input type="checkbox" id="oculos"> Óculos</label>
+            <label><input type="checkbox" id="camisa"> Camisa</label>
+            <label><input type="checkbox" id="chapeu"> Chapéu</label>
+            <label><input type="checkbox" id="calsa"> Calça</label>
+            <label><input type="checkbox" id="capa"> Capa</label>
 
-            <div class="epi-list">
-                <label><input type="checkbox" class="epi" value="Bota" id="botaCheck"> Bota</label>
-
-                <div id="numeroBotaDiv" style="display:none; margin-left:20px;">
-                    <input type="number" id="numeroBota" placeholder="Número da bota">
-                </div>
-
-                <label><input type="checkbox" class="epi" value="Luva"> Luva</label>
-                <label><input type="checkbox" class="epi" value="Óculos"> Óculos</label>
-                <label><input type="checkbox" class="epi" value="Camisa"> Camisa</label>
-                <label><input type="checkbox" class="epi" value="Chapéu"> Chapéu</label>
-                <label><input type="checkbox" class="epi" value="Calça"> Calça</label>
-                <label><input type="checkbox" class="epi" value="Capa"> Capa</label>
-            </div>
-
-            <button class="btn" onclick="salvar()">Salvar Trabalhador</button>
         </div>
 
-        <!-- LISTA -->
-        <div class="card">
-            <h2>Trabalhadores Cadastrados</h2>
-            <div id="lista"></div>
-        </div>
-
+        <button class="salvar" onclick="salvar()">Salvar Trabalhador</button>
     </div>
+</div>
+
+<!-- PÁGINA LISTA -->
+<div id="lista" class="page">
+    <h2 style="margin-bottom: 10px;">Trabalhadores Cadastrados</h2>
+    <div id="listaTrabalhadores"></div>
 </div>
 
 <script>
 
-let trabalhadores = JSON.parse(localStorage.getItem("trabalhadores")) || [];
+function trocarAba(aba) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(aba).classList.add("active");
 
-mostrarLista();
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    event.target.classList.add("active");
+}
 
-document.getElementById("botaCheck").addEventListener("change", () => {
-    document.getElementById("numeroBotaDiv").style.display =
-        document.getElementById("botaCheck").checked ? "block" : "none";
-});
+function mostrarNumeroBota() {
+    document.getElementById("numBota").style.display =
+        document.getElementById("bota").checked ? "block" : "none";
+}
 
+/* ---------- SALVAR NO LOCALSTORAGE ---------- */
 function salvar() {
-    const nome = document.getElementById("nome").value.trim();
-    const matricula = document.getElementById("matricula").value.trim();
+    let nome = document.getElementById("nome").value.trim();
+    let matricula = document.getElementById("matricula").value.trim();
 
-    const epis = [];
-    let numeroBota = "";
-
-    document.querySelectorAll(".epi:checked").forEach(e => epis.push(e.value));
-
-    if (document.getElementById("botaCheck").checked) {
-        numeroBota = document.getElementById("numeroBota").value.trim();
-    }
-
-    if (!nome || !matricula) {
+    if (nome === "" || matricula === "") {
         alert("Preencha nome e matrícula!");
         return;
     }
 
-    trabalhadores.push({ nome, matricula, epis, numeroBota });
+    let epi = [];
 
-    localStorage.setItem("trabalhadores", JSON.stringify(trabalhadores));
+    if (bota.checked) epi.push("Bota (" + numBota.value + ")");
+    if (luva.checked) epi.push("Luva");
+    if (oculos.checked) epi.push("Óculos");
+    if (camisa.checked) epi.push("Camisa");
+    if (chapeu.checked) epi.push("Chapéu");
+    if (calsa.checked) epi.push("Calça");
+    if (capa.checked) epi.push("Capa");
 
-    document.getElementById("nome").value = "";
-    document.getElementById("matricula").value = "";
-    document.querySelectorAll(".epi").forEach(e => e.checked = false);
-    document.getElementById("numeroBotaDiv").style.display = "none";
-    document.getElementById("numeroBota").value = "";
+    let trabalhador = {
+        nome,
+        matricula,
+        epi
+    };
 
-    mostrarLista();
+    let lista = JSON.parse(localStorage.getItem("trabalhadores") || "[]");
+    lista.push(trabalhador);
+    localStorage.setItem("trabalhadores", JSON.stringify(lista));
+
+    alert("Trabalhador salvo!");
+    carregarLista();
 }
 
-function mostrarLista() {
-    const lista = document.getElementById("lista");
-    lista.innerHTML = "";
+/* ---------- LISTAR ---------- */
+function carregarLista() {
+    let lista = JSON.parse(localStorage.getItem("trabalhadores") || "[]");
+    let div = document.getElementById("listaTrabalhadores");
 
-    trabalhadores.forEach(t => {
-        let epiTags = t.epis.map(epi => `<span class="epi-tag">${epi}</span>`).join("");
+    div.innerHTML = "";
 
-        if (t.numeroBota) {
-            epiTags += `<span class="epi-tag">Bota Nº ${t.numeroBota}</span>`;
-        }
-
-        lista.innerHTML += `
-            <div class="worker-box">
-                <b>Nome:</b> ${t.nome}<br>
-                <b>Matrícula:</b> ${t.matricula}<br><br>
-                <b>EPIs Necessários:</b><br>
-                ${epiTags}
+    lista.forEach(t => {
+        let card = `
+            <div class="worker-card">
+                <p><b>Nome:</b> ${t.nome}</p>
+                <p><b>Matrícula:</b> ${t.matricula}</p>
+                <p><b>EPIs:</b></p>
+                ${t.epi.map(e => `<span class="epi-item">${e}</span>`).join("")}
             </div>
         `;
+        div.innerHTML += card;
     });
 }
+
+carregarLista();
 
 </script>
 
 </body>
 </html>
+
