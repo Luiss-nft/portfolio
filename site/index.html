@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Achadinhos da Mary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #e8e8ed;
+            height: 100vh;
+            height: 100dvh;
+            height: -webkit-fill-available;
+            overflow: hidden;
+        }
+
+        .page-videos {
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            padding-bottom: 75px;
+            display: block;
+        }
+
+        .page-videos.hidden {
+            display: none;
+        }
+
+        .page-videos::-webkit-scrollbar {
+            display: none;
+        }
+
+        .reel-item {
+            height: 100vh;
+            height: 100dvh;
+            scroll-snap-align: start;
+            position: relative;
+            background: #d5d5dd;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .video-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            background: linear-gradient(135deg, #dcdce3 0%, #cfcfd8 50%, #c5c5d0 100%);
+        }
+
+        .page-loja {
+            height: 100vh;
+            height: 100dvh;
+            overflow-y: auto;
+            padding: 130px 16px calc(90px + env(safe-area-inset-bottom));
+            display: none;
+            background: #e8e8ed;
+        }
+
+        .page-loja.active {
+            display: block;
+        }
+
+        .page-loja::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .page-loja::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .page-loja::-webkit-scrollbar-thumb {
+            background: rgba(255,107,53,0.4);
+            border-radius: 3px;
+        }
+
+        .loja-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .loja-header h2 {
+            color: #1a1a2e;
+            font-size: clamp(18px, 5vw, 22px);
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .loja-header p {
+            color: #999;
+            font-size: 12px;
+            font-weight: 400;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .product-card {
+            background: #f5f5f7;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .card-image {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #eaeaef, #e0e0e8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-image svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.2;
+            color: #FF6B35;
+        }
+
+        .card-image .card-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(66, 133, 244, 0.1);
+            border: 1px solid rgba(66, 133, 244, 0.2);
+            color: #4285F4;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 211, 153, 0.12);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: #059669;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-info {
+            padding: 14px;
+        }
+
+        .card-name {
+            color: #1a1a2e;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            color: #999;
+            font-size: 10px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+            line-height: 1.4;
+        }
+
+        .card-price-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .card-price-old {
+            font-size: 11px;
+            color: #c5c5cc;
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .card-price-new {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.5px;
+        }
+
+        .card-btn-shopee {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            background: #FF6B35;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 2px 8px rgba(255,107,53,0.2);
+        }
+
+        .card-btn-shopee svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .card-btn-shopee:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+
+        /* ===== BARRA SUPERIOR - LOGO CENTRALIZADA ===== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: calc(16px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left));
+            display: flex;
+            justify-content: center;
+        }
+
+        .top-bar-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* LOGO - CENTRALIZADA E GRANDE */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 140px;
+            height: 140px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            overflow: hidden;
+        }
+
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* ===== CAIXA DE PREÇO COM CRONÔMETRO DISCRETO ===== */
+        .product-info-box {
+            position: absolute;
+            bottom: calc(72px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 7px 10px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: min(225px, calc(100vw - 32px));
+        }
+
+        .product-name-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .product-tag {
+            display: inline-block;
+            flex-shrink: 0;
+            white-space: nowrap;
+            padding: 3px 8px;
+            border-radius: 9px;
+            font-size: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+            background: rgba(66, 133, 244, 0.2);
+            color: #1a56db;
+            border: 1px solid rgba(66, 133, 244, 0.3);
+        }
+
+        .product-name {
+            flex: 1;
+            min-width: 0;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #1a1a2e;
+            line-height: 1.15;
+        }
+
+        .product-desc {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 400;
+            letter-spacing: 0.1px;
+            line-height: 1.25;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 3px;
+            flex-wrap: wrap;
+        }
+
+        .price-old {
+            font-size: 11px;
+            color: #999;
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .price-new {
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #1a1a2e;
+        }
+
+        .price-off {
+            background: rgba(52, 211, 153, 0.2);
+            padding: 3px 6px;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #059669;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        /* CRONÔMETRO DISCRETO DENTRO DA CAIXA DE PREÇO */
+        .timer-discreet {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            color: #999;
+            font-weight: 400;
+            margin-top: 1px;
+            letter-spacing: 0.2px;
+        }
+
+        .timer-discreet .timer-icon-small {
+            width: 10px;
+            height: 10px;
+            opacity: 0.5;
+            flex-shrink: 0;
+        }
+
+        .timer-discreet .timer-numbers-small {
+            font-weight: 600;
+            color: #FF6B35;
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 10px;
+        }
+
+        .timer-discreet .timer-label {
+            color: #bbb;
+            font-size: 8px;
+        }
+
+        .timer-discreet.expiring .timer-numbers-small {
+            color: #EF4444;
+            animation: pulse-expiring 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-expiring {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .btn-shopee {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.2px;
+            background: #FF6B35;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 3px 10px rgba(255,107,53,0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-shopee:hover {
+            background: #E85D2C;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255,107,53,0.4);
+        }
+
+        .btn-shopee:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-shopee svg {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            right: max(12px, env(safe-area-inset-right));
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .scroll-dot {
+            width: 2px;
+            height: 14px;
+            border-radius: 2px;
+            background: rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .scroll-dot.active {
+            background: #FF6B35;
+            height: 24px;
+        }
+
+        .toast {
+            position: fixed;
+            top: calc(160px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(37,211,102,0.12);
+            backdrop-filter: blur(20px);
+            color: #059669;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 2000;
+            animation: toastIn 0.4s ease-out, toastOut 0.4s ease-out 1.8s forwards;
+            border: 1px solid rgba(37,211,102,0.25);
+            letter-spacing: 0.3px;
+            font-family: 'Poppins', sans-serif;
+            max-width: calc(100vw - 32px);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; }
+            to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== NAVBAR ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: max(8px, calc(env(safe-area-inset-bottom) + 4px));
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            background: rgba(245,245,247,0.92);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            z-index: 100;
+            border-radius: 24px;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 
+                0 4px 20px rgba(0,0,0,0.06),
+                0 1px 4px rgba(0,0,0,0.03);
+            padding: 6px;
+            gap: 4px;
+            width: auto;
+            max-width: calc(100vw - 32px);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            position: relative;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #aaa;
+            text-decoration: none;
+            z-index: 1;
+            border-radius: 18px;
+            white-space: nowrap;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            flex-shrink: 0;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .nav-item.active {
+            background: rgba(255,107,53,0.1);
+            color: #FF6B35;
+            box-shadow: 0 2px 10px rgba(255,107,53,0.08);
+            border: 1px solid rgba(255,107,53,0.15);
+        }
+
+        .nav-item.active svg {
+            filter: drop-shadow(0 1px 3px rgba(255,107,53,0.2));
+            animation: iconPop 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+        }
+
+        .nav-item.active span {
+            font-weight: 600;
+        }
+
+        @keyframes iconPop {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.2); }
+            60% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(0,0,0,0.02);
+            color: #777;
+        }
+
+        .nav-item:hover:not(.active) svg {
+            transform: translateY(-1px);
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 500px) {
+            .bottom-nav { border-radius: 20px; padding: 5px; gap: 3px; }
+            .nav-item { padding: 8px 16px; gap: 6px; border-radius: 16px; }
+            .nav-item svg { width: 16px; height: 16px; }
+            .nav-item span { font-size: 10px; }
+            .products-grid { gap: 8px; }
+            .card-info { padding: 10px; }
+            .card-name { font-size: 12px; }
+            .card-price-new { font-size: 17px; }
+            .product-info-box { bottom: calc(66px + env(safe-area-inset-bottom)); padding: 6px 9px; }
+            .product-name { font-size: 15px; }
+            .price-new { font-size: 20px; }
+            .brand-logo { width: 110px; height: 110px; }
+            .page-videos { padding-bottom: 68px; }
+            .page-loja { padding: 120px 16px calc(80px + env(safe-area-inset-bottom)); }
+            .top-bar-row { gap: 8px; }
+        }
+
+        @media (max-width: 400px) {
+            .brand-logo { width: 90px; height: 90px; }
+            .scroll-dot { height: 10px; }
+            .scroll-dot.active { height: 20px; }
+            .top-bar { padding: calc(12px + env(safe-area-inset-top)) 8px 4px 8px; }
+            .bottom-nav { border-radius: 18px; padding: 4px; gap: 2px; }
+            .nav-item { padding: 6px 14px; gap: 5px; border-radius: 14px; }
+            .nav-item svg { width: 14px; height: 14px; }
+            .nav-item span { font-size: 9px; }
+            .timer-discreet .timer-numbers-small { font-size: 9px; }
+            .timer-discreet .timer-label { font-size: 7px; }
+        }
+
+        @media (max-width: 380px) {
+            .brand-logo { width: 80px; height: 80px; }
+            .bottom-nav { border-radius: 16px; padding: 4px; gap: 2px; }
+            .nav-item { padding: 5px 12px; gap: 4px; border-radius: 12px; }
+            .nav-item svg { width: 13px; height: 13px; }
+            .nav-item span { font-size: 8px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .card-name { font-size: 11px; }
+            .card-price-new { font-size: 15px; }
+            .product-info-box { bottom: calc(60px + env(safe-area-inset-bottom)); padding: 6px 8px; border-radius: 11px; }
+            .product-name { font-size: 14px; }
+            .price-new { font-size: 19px; }
+            .btn-shopee { padding: 8px; font-size: 11px; }
+            .top-bar { padding: calc(10px + env(safe-area-inset-top)) 4px 2px 4px; }
+            .page-videos { padding-bottom: 60px; }
+            .page-loja { padding: 110px 16px calc(72px + env(safe-area-inset-bottom)); }
+            .timer-discreet .timer-numbers-small { font-size: 8px; }
+            .timer-discreet .timer-icon-small { width: 8px; height: 8px; }
+        }
+
+        @media (max-height: 600px) {
+            .brand-logo { width: 90px; height: 90px; }
+            .product-info-box { bottom: calc(60px + env(safe-area-inset-bottom)); }
+            .top-bar { padding: calc(10px + env(safe-area-inset-top)) 12px 4px 12px; }
+            .bottom-nav { padding: 4px; }
+            .nav-item { padding: 6px 14px; }
+            .page-videos { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== BARRA SUPERIOR - SÓ A LOGO CENTRALIZADA ===== -->
+    <div class="top-bar" id="topBar">
+        <div class="top-bar-row">
+            <div class="brand-logo" id="brandLogo">
+                <img src="imagen/LOGO PNG.png" alt="Logo Achadinhos da Mary">
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Vídeos -->
+    <div class="page-videos" id="pageVideos">
+        <div class="reels-container" id="reelsContainer"></div>
+        <div class="scroll-indicator" id="scrollIndicator"></div>
+    </div>
+
+    <!-- Página da Loja -->
+    <div class="page-loja" id="pageLoja">
+        <div class="loja-header">
+            <h2>Todos os Produtos</h2>
+            <p>Frete grátis em todos os itens</p>
+        </div>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('videos', this)" id="videoTab">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>Vídeos</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('loja', this)" id="storeTab">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span>Loja</span>
+        </button>
+    </nav>
+
+    <script>
+        const videoProducts = [
+            { id: 1, video: 'imagen/Hands_holding_denim_skirt_202607120028.mp4', name: 'Saia Jeans', desc: '', priceOld: 'R$299', priceNew: 'R$149', discount: '50% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=saia+jeans' },
+            { id: 2, video: 'imagen/Hands_holding_black_gloves_showi…_202607111613.mp4', name: 'Luvas Pretas', desc: '', priceOld: 'R$599', priceNew: 'R$399', discount: '33% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=luvas+pretas' },
+            { id: 3, video: 'videos/produto03.mp4', name: 'Kit Skincare Completo', desc: 'Rotina completa · Ingredientes naturais · Pele radiante', priceOld: 'R$199', priceNew: 'R$89', discount: '55% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=kit+skincare' },
+            { id: 4, video: 'videos/produto04.mp4', name: 'Câmera 4K Ultra', desc: 'Estabilização · Night mode · Compacta e leve', priceOld: 'R$899', priceNew: 'R$649', discount: '28% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=camera+4k' },
+            { id: 5, video: 'videos/produto05.mp4', name: 'Tênis Esportivo Air', desc: 'Ultra leve · Amortecimento · Design moderno', priceOld: 'R$499', priceNew: 'R$299', discount: '40% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=tenis+esportivo' },
+            { id: 6, video: 'videos/produto06.mp4', name: 'Mouse Gamer RGB', desc: '16000 DPI · 8 botões · Iluminação personalizada', priceOld: 'R$249', priceNew: 'R$129', discount: '48% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=mouse+gamer+rgb' },
+            { id: 7, video: 'videos/produto07.mp4', name: 'Carregador Rápido 65W', desc: 'Compatível iPhone e Android · Segurança total', priceOld: 'R$159', priceNew: 'R$79', discount: '50% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=carregador+rapido+65w' },
+            { id: 8, video: 'videos/produto08.mp4', name: 'Aspirador Robô Smart', desc: 'Mapeamento inteligente · App controle · Silencioso', priceOld: 'R$1299', priceNew: 'R$899', discount: '31% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=aspirador+robo+smart' },
+            { id: 9, video: 'videos/produto09.mp4', name: 'Secador Profissional', desc: 'Íons negativos · 3 temperaturas · Anti-frizz', priceOld: 'R$349', priceNew: 'R$199', discount: '43% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=secador+profissional' },
+            { id: 10, video: 'videos/produto10.mp4', name: 'Pulseira Magnética', desc: 'Aço inoxidável · Fecho magnético · Elegante', priceOld: 'R$129', priceNew: 'R$69', discount: '47% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=pulseira+magnetica' },
+            { id: 11, video: 'videos/produto11.mp4', name: 'Caixa de Som Portátil', desc: 'Graves potentes · À prova d\'água · 12h bateria', priceOld: 'R$199', priceNew: 'R$119', discount: '40% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=caixa+de+som+portatil' },
+            { id: 12, video: 'videos/produto12.mp4', name: 'Protetor Solar FPS 70', desc: 'Toque seco · Resistente à água · Sem óleo', priceOld: 'R$89', priceNew: 'R$49', discount: '45% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=protetor+solar+fps+70' },
+            { id: 13, video: 'videos/produto13.mp4', name: 'Ring Light 18"', desc: '3 cores · 10 níveis · Controle remoto', priceOld: 'R$179', priceNew: 'R$99', discount: '45% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=ring+light+18' },
+            { id: 14, video: 'videos/produto14.mp4', name: 'Air Fryer Digital', desc: '4L · 8 programas · Fácil limpeza', priceOld: 'R$399', priceNew: 'R$249', discount: '38% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=air+fryer+digital' },
+            { id: 15, video: 'videos/produto15.mp4', name: 'Mochila Executiva', desc: 'À prova d\'água · USB integrado · Antifurto', priceOld: 'R$259', priceNew: 'R$149', discount: '42% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=mochila+executiva' },
+            { id: 16, video: 'videos/produto16.mp4', name: 'Luminária LED Touch', desc: '3 temperaturas · Dimmer touch · Braço flexível', priceOld: 'R$149', priceNew: 'R$89', discount: '40% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=luminaria+led+touch' },
+            { id: 17, video: 'videos/produto17.mp4', name: 'Corda de Pular Digital', desc: 'Contador LCD · Ajustável · Rolamento suave', priceOld: 'R$79', priceNew: 'R$39', discount: '51% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=corda+de+pular+digital' },
+            { id: 18, video: 'videos/produto18.mp4', name: 'Kit Ferramentas 50pcs', desc: 'Maleta organizada · Uso doméstico · Alta qualidade', priceOld: 'R$199', priceNew: 'R$119', discount: '40% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=kit+ferramentas+50' },
+            { id: 19, video: 'videos/produto19.mp4', name: 'Fonte de Água para Pets', desc: 'Filtro triplo · Silenciosa · 3L capacidade', priceOld: 'R$159', priceNew: 'R$99', discount: '38% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=fonte+de+agua+para+pets' },
+            { id: 20, video: 'videos/produto20.mp4', name: 'Projetor Portátil', desc: '1080p · Conexão WiFi · Tela até 120"', priceOld: 'R$699', priceNew: 'R$449', discount: '36% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=projetor+portatil' }
+        ];
+
+        const storeProducts = [
+            { id: 1, image: '', name: 'Vestido Floral', desc: 'Tecido leve · Estampa exclusiva · Verão 2026', priceOld: 'R$199', priceNew: 'R$99', discount: '50% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=vestido+floral' },
+            { id: 2, image: '', name: 'Bolsa Couro Sintético', desc: 'Alça ajustável · 3 compartimentos · Premium', priceOld: 'R$259', priceNew: 'R$149', discount: '42% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=bolsa+couro+sintetico' },
+            { id: 3, image: '', name: 'Sandália Rasteira', desc: 'Confortável · Solado antiderrapante · Várias cores', priceOld: 'R$129', priceNew: 'R$69', discount: '47% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=sandalia+rasteira' },
+            { id: 4, image: '', name: 'Conjunto Fitness', desc: 'Tecido dry fit · Top + Legging · Alta compressão', priceOld: 'R$189', priceNew: 'R$99', discount: '48% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=conjunto+fitness' },
+            { id: 5, image: '', name: 'Óculos de Sol UV400', desc: 'Proteção total · Armação leve · Unissex', priceOld: 'R$149', priceNew: 'R$79', discount: '47% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=oculos+de+sol+uv400' },
+            { id: 6, image: '', name: 'Chapéu de Praia', desc: 'Palha natural · Aba larga · Proteção solar', priceOld: 'R$99', priceNew: 'R$49', discount: '51% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=chapeu+de+praia' },
+            { id: 7, image: '', name: 'Colar Pingente Coração', desc: 'Folheado a ouro · Hipoalergênico · Elegante', priceOld: 'R$89', priceNew: 'R$39', discount: '56% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=colar+pingente+coracao' },
+            { id: 8, image: '', name: 'Relógio Minimalista', desc: 'Pulseira de couro · Resistente à água · Design clean', priceOld: 'R$199', priceNew: 'R$119', discount: '40% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=relogio+minimalista' },
+            { id: 9, image: '', name: 'Necessaire Organizadora', desc: 'Impermeável · 3 tamanhos · Para viagem', priceOld: 'R$79', priceNew: 'R$39', discount: '51% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=necessaire+organizadora' },
+            { id: 10, image: '', name: 'Cinto Feminino Fivela', desc: 'Couro legítimo · Fivela dourada · Ajustável', priceOld: 'R$119', priceNew: 'R$69', discount: '42% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=cinto+feminino+fivela' },
+            { id: 11, image: '', name: 'Blusa Cropped', desc: 'Malha premium · Modelagem ajustada · 10 cores', priceOld: 'R$89', priceNew: 'R$49', discount: '45% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=blusa+cropped' },
+            { id: 12, image: '', name: 'Short Jeans Cintura Alta', desc: 'Jeans com elastano · Botão decorativo · Tendência', priceOld: 'R$159', priceNew: 'R$89', discount: '44% OFF', shopeeLink: 'https://www.shopee.com.br/search?keyword=short+jeans+cintura+alta' }
+        ];
+
+        let currentProductIndex = 0;
+
+        function getNextSundayMidnight() {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
+            const nextSunday = new Date(now);
+            nextSunday.setDate(now.getDate() + daysUntilSunday);
+            nextSunday.setHours(0, 0, 0, 0);
+            return nextSunday;
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const nextSunday = getNextSundayMidnight();
+            if (now >= nextSunday) nextSunday.setDate(nextSunday.getDate() + 7);
+            const diff = nextSunday - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const fh = String(hours).padStart(2, '0');
+            const fm = String(minutes).padStart(2, '0');
+            const fs = String(seconds).padStart(2, '0');
+            
+            // Atualiza todos os cronômetros discretos
+            const timerElements = document.querySelectorAll('.timer-numbers-small');
+            const timerDiscreet = document.querySelector('.timer-discreet');
+            
+            timerElements.forEach(el => {
+                el.textContent = days > 0 ? `${days}d ${fh}:${fm}:${fs}` : `${fh}:${fm}:${fs}`;
+            });
+            
+            if (days === 0 && hours < 24) {
+                if (timerDiscreet) timerDiscreet.classList.add('expiring');
+            } else {
+                if (timerDiscreet) timerDiscreet.classList.remove('expiring');
+            }
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+
+        const reelsContainer = document.getElementById('reelsContainer');
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        reelsContainer.innerHTML = '';
+        scrollIndicator.innerHTML = '';
+
+        videoProducts.forEach((product, index) => {
+            const reelItem = document.createElement('div');
+            reelItem.className = 'reel-item';
+            reelItem.dataset.index = index;
+            reelItem.dataset.shopeeLink = product.shopeeLink;
+            reelItem.innerHTML = `
+                <video class="video-background" src="${product.video}" loop playsinline preload="metadata"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"></video>
+                <div class="video-fallback" style="display:none;">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="rgba(255,107,53,0.25)"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="product-info-box">
+                    <div class="product-name-row">
+                        <span class="product-tag">Frete Grátis</span>
+                        <div class="product-name">${product.name}</div>
+                    </div>
+                    <div class="product-desc">${product.desc}</div>
+                    <div class="price-row">
+                        <span class="price-old">${product.priceOld}</span>
+                        <span class="price-new">${product.priceNew}</span>
+                        <span class="price-off">${product.discount}</span>
+                    </div>
+                    <!-- CRONÔMETRO DISCRETO DENTRO DA CAIXA DE PREÇO -->
+                    <div class="timer-discreet">
+                        <svg class="timer-icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+                        </svg>
+                        <span class="timer-label">Expira em</span>
+                        <span class="timer-numbers-small">6d 23:59:59</span>
+                    </div>
+                    <a href="${product.shopeeLink}" target="_blank" class="btn-shopee">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        Ver na Shopee
+                    </a>
+                </div>
+            `;
+            reelsContainer.appendChild(reelItem);
+            const dot = document.createElement('div');
+            dot.className = 'scroll-dot';
+            if (index === 0) dot.classList.add('active');
+            dot.onclick = () => reelItem.scrollIntoView({ behavior: 'smooth' });
+            scrollIndicator.appendChild(dot);
+        });
+
+        const productsGrid = document.getElementById('productsGrid');
+        productsGrid.innerHTML = '';
+        storeProducts.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="card-image">
+                    ${product.image ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    <span class="card-tag">Frete Grátis</span>
+                    <span class="card-discount-badge">${product.discount}</span>
+                </div>
+                <div class="card-info">
+                    <div class="card-name">${product.name}</div>
+                    <div class="card-desc">${product.desc}</div>
+                    <div class="card-price-row">
+                        <span class="card-price-old">${product.priceOld}</span>
+                        <span class="card-price-new">${product.priceNew}</span>
+                    </div>
+                    <a href="${product.shopeeLink}" target="_blank" class="card-btn-shopee">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        Ver na Shopee
+                    </a>
+                </div>
+            `;
+            productsGrid.appendChild(card);
+        });
+
+        const allVideos = document.querySelectorAll('.video-background');
+        const allReelItems = document.querySelectorAll('.reel-item');
+        const allDots = document.querySelectorAll('.scroll-dot');
+
+        if (allVideos.length > 0) {
+            allVideos[0].play().catch(() => {
+                allVideos[0].muted = true;
+                allVideos[0].play();
+            });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('.video-background');
+                const index = parseInt(entry.target.dataset.index);
+                if (entry.isIntersecting) {
+                    if (video && video.style.display !== 'none') {
+                        video.play().catch(() => { video.muted = true; video.play(); });
+                    }
+                    allDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                    currentProductIndex = index;
+                } else {
+                    if (video) video.pause();
+                }
+            });
+        }, { threshold: 0.7 });
+
+        allReelItems.forEach(item => observer.observe(item));
+
+        function switchTab(tab, element) {
+            const navItems = document.querySelectorAll('.nav-item');
+            const pageVideos = document.getElementById('pageVideos');
+            const pageLoja = document.getElementById('pageLoja');
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            navItems.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            if (tab === 'videos') {
+                pageVideos.classList.remove('hidden');
+                pageLoja.classList.remove('active');
+                scrollIndicator.style.display = 'flex';
+                const cv = allReelItems[currentProductIndex]?.querySelector('.video-background');
+                if (cv) cv.play().catch(() => { cv.muted = true; cv.play(); });
+            } else {
+                pageVideos.classList.add('hidden');
+                pageLoja.classList.add('active');
+                scrollIndicator.style.display = 'none';
+                allVideos.forEach(v => v.pause());
+            }
+        }
+
+        function showToast(msg) {
+            const et = document.querySelector('.toast');
+            if (et) et.remove();
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2200);
+        }
+    </script>
+</body>
+</html>
