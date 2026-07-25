@@ -42,7 +42,7 @@
             position: relative;
         }
 
-        /* ===== VÍDEO ===== */
+        /* ===== VÍDEO - OCUPA TODO O ESPAÇO DISPONÍVEL ===== */
         .video-wrapper {
             position: relative;
             width: 100%;
@@ -51,6 +51,7 @@
             cursor: pointer;
             overflow: hidden;
             min-height: 60px;
+            /* Altura será controlada pelo JS */
         }
 
         .video-wrapper video {
@@ -148,15 +149,16 @@
             color: #ee4d2d;
         }
 
-        /* ===== BLOCO DE CONTEÚDO ===== */
+        /* ===== BLOCO DE CONTEÚDO - POSIÇÃO FIXA NA PARTE INFERIOR ===== */
         .content-wrapper {
-            position: relative;
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
             z-index: 2;
             background: white;
-            flex-shrink: 0;
             padding-bottom: 8px;
-            /* DESCEU 50px - agora sobe 100px no total */
-            transform: translateY(-100px);
+            /* Remove o transform e usa posicionamento absoluto */
         }
 
         /* Área do produto */
@@ -360,17 +362,10 @@
             transform: scale(0.95);
         }
 
-        /* ===== ESPAÇO INFERIOR ===== */
-        .bottom-spacer {
-            flex-shrink: 0;
-            height: 40px;
-            background: white;
-        }
-
         /* ===== MEDIA QUERIES ===== */
         @media (max-height: 700px) {
             .content-wrapper {
-                transform: translateY(-80px);
+                bottom: 30px;
             }
             .product-info {
                 padding: 8px 12px 4px 12px;
@@ -414,7 +409,7 @@
 
         @media (max-height: 580px) {
             .content-wrapper {
-                transform: translateY(-60px);
+                bottom: 20px;
             }
             .product-info {
                 padding: 6px 10px 3px 10px;
@@ -504,7 +499,7 @@
 
         @media (max-height: 450px) {
             .content-wrapper {
-                transform: translateY(-40px);
+                bottom: 12px;
             }
             .product-info {
                 padding: 4px 8px 2px 8px;
@@ -599,7 +594,7 @@
 
         @media (max-height: 350px) {
             .content-wrapper {
-                transform: translateY(-30px);
+                bottom: 8px;
             }
             .product-info {
                 padding: 2px 6px 1px 6px;
@@ -713,7 +708,7 @@
                 padding: 2px 0;
             }
             .content-wrapper {
-                transform: translateY(-80px);
+                bottom: 25px;
             }
         }
 
@@ -744,7 +739,7 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO QUE SOBE USANDO TRANSFORM - DESCEU 50px -->
+        <!-- CONTEÚDO POSICIONADO NA PARTE INFERIOR COM ABSOLUTE -->
         <div class="content-wrapper">
 
             <div class="product-info">
@@ -788,9 +783,6 @@
 
         </div>
 
-        <!-- ESPAÇO INFERIOR -->
-        <div class="bottom-spacer"></div>
-
     </div>
 
     <script>
@@ -800,15 +792,14 @@
                 const card = document.querySelector('.shopee-card');
                 const videoWrapper = document.getElementById('videoWrapper');
                 const contentWrapper = document.querySelector('.content-wrapper');
-                const bottomSpacer = document.querySelector('.bottom-spacer');
 
                 if (!card || !videoWrapper || !contentWrapper) return;
 
                 const cardHeight = card.clientHeight;
                 const contentHeight = contentWrapper.offsetHeight;
-                const spacerHeight = bottomSpacer ? bottomSpacer.offsetHeight : 0;
 
-                let videoHeight = cardHeight - contentHeight - spacerHeight;
+                // O vídeo ocupa toda a altura do card menos a altura do conteúdo
+                let videoHeight = cardHeight - contentHeight;
 
                 if (videoHeight < 60) {
                     videoHeight = 60;
@@ -919,7 +910,7 @@
                 console.log('🔗 Link da Shopee: ' + shopeeLink.href);
             }
 
-            console.log('📱 Bloco desceu 50px (agora sobe 100px)');
+            console.log('📱 Bloco posicionado com absolute na parte inferior');
         })();
     </script>
 </body>
