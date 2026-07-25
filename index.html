@@ -40,8 +40,8 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            /* Espaço inferior de 30px em branco */
-            padding-bottom: 30px;
+            /* Espaço inferior de 40px em branco */
+            padding-bottom: 40px;
         }
 
         /* ===== PRIORIDADE: BOTÃO E INFORMAÇÕES FICAM FIXOS ===== */
@@ -216,7 +216,6 @@
             align-items: center;
             justify-content: center;
             margin: 6px 14px 0px 14px;
-            /* removida margem inferior */
             padding: 12px 0;
             background: #ee4d2d;
             color: white;
@@ -281,10 +280,11 @@
             object-fit: cover;
         }
 
-        /* LOGO SOBREPOSTA AO VÍDEO */
+        /* LOGO SOBREPOSTA AO VÍDEO - desceu 40px */
         .logo-overlay {
             position: absolute;
-            top: 8px;
+            top: 48px;
+            /* antes era 8px, agora +40px = 48px */
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -367,7 +367,7 @@
         /* ===== MEDIA QUERIES - VÍDEO ENCOLHE, INFORMAÇÕES E BOTÃO FICAM ===== */
         @media (max-height: 700px) {
             .shopee-card {
-                padding-bottom: 25px;
+                padding-bottom: 35px;
             }
             .product-info {
                 padding: 8px 12px 4px 12px;
@@ -398,7 +398,8 @@
             }
             .logo-overlay {
                 max-width: 55px;
-                top: 6px;
+                top: 42px;
+                /* 2px + 40px */
             }
             .play-button {
                 width: 42px;
@@ -414,7 +415,7 @@
 
         @media (max-height: 580px) {
             .shopee-card {
-                padding-bottom: 20px;
+                padding-bottom: 30px;
             }
             .product-info {
                 padding: 6px 10px 3px 10px;
@@ -491,7 +492,8 @@
             }
             .logo-overlay {
                 max-width: 45px;
-                top: 4px;
+                top: 36px;
+                /* -4px + 40px */
             }
             .play-button {
                 width: 35px;
@@ -507,7 +509,7 @@
 
         @media (max-height: 450px) {
             .shopee-card {
-                padding-bottom: 15px;
+                padding-bottom: 25px;
             }
             .product-info {
                 padding: 4px 8px 2px 8px;
@@ -589,7 +591,8 @@
             }
             .logo-overlay {
                 max-width: 35px;
-                top: 3px;
+                top: 32px;
+                /* -8px + 40px */
             }
             .play-button {
                 width: 28px;
@@ -605,7 +608,7 @@
 
         @media (max-height: 350px) {
             .shopee-card {
-                padding-bottom: 10px;
+                padding-bottom: 20px;
             }
             .product-info {
                 padding: 2px 6px 1px 6px;
@@ -682,7 +685,8 @@
             }
             .logo-overlay {
                 max-width: 25px;
-                top: 2px;
+                top: 28px;
+                /* -12px + 40px */
             }
             .play-button {
                 width: 20px;
@@ -699,7 +703,8 @@
         @media (max-width: 350px) {
             .logo-overlay {
                 max-width: 30px;
-                top: 3px;
+                top: 44px;
+                /* 4px + 40px */
             }
             .product-name {
                 font-size: clamp(0.4rem, 1.3vw, 0.5rem);
@@ -722,7 +727,7 @@
                 padding: 2px 0;
             }
             .shopee-card {
-                padding-bottom: 8px;
+                padding-bottom: 18px;
             }
         }
 
@@ -737,7 +742,7 @@
 
         <!-- VÍDEO - PRIORIDADE MENOR (encolhe) -->
         <div class="video-wrapper" id="videoWrapper">
-            <!-- Logo PNG sobreposta ao vídeo -->
+            <!-- Logo PNG sobreposta ao vídeo - posicionada mais para baixo -->
             <div class="logo-overlay">
                 <img src="imagen/LOGO PNG.png" alt="Logo da marca">
             </div>
@@ -819,7 +824,7 @@
                 const cardHeight = card.clientHeight;
                 const infoHeight = productInfo ? productInfo.offsetHeight : 0;
                 const btnHeight = shopeeBtn ? shopeeBtn.offsetHeight : 0;
-                const paddingBottom = 30; // mesmo valor do padding-bottom do card
+                const paddingBottom = 40; // mesmo valor do padding-bottom do card
 
                 // Calcula o espaço restante para o vídeo (desconta o padding inferior)
                 let videoHeight = cardHeight - infoHeight - btnHeight - paddingBottom;
@@ -936,7 +941,7 @@
                 console.log('🔗 Link da Shopee: ' + shopeeLink.href);
             }
 
-            console.log('📱 Espaço inferior de 30px em branco');
+            console.log('📱 Espaço inferior de 40px e logo desceu 40px');
         })();
     </script>
 </body>
