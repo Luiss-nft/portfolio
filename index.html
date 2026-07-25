@@ -39,11 +39,10 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding-bottom: 40px;
             position: relative;
         }
 
-        /* ===== VÍDEO - PRIORIDADE MENOR ===== */
+        /* ===== VÍDEO ===== */
         .video-wrapper {
             position: relative;
             width: 100%;
@@ -52,7 +51,6 @@
             cursor: pointer;
             overflow: hidden;
             min-height: 60px;
-            /* A altura será controlada pelo JS */
         }
 
         .video-wrapper video {
@@ -150,15 +148,15 @@
             color: #ee4d2d;
         }
 
-        /* ===== BLOCO DE CONTEÚDO (informações + botão) - SOBE 100px ===== */
+        /* ===== BLOCO DE CONTEÚDO ===== */
         .content-wrapper {
             position: relative;
             z-index: 2;
             background: white;
             flex-shrink: 0;
-            /* SUBIU 100px */
-            margin-top: -100px;
             padding-bottom: 8px;
+            /* DESCEU 50px - agora sobe 100px no total */
+            transform: translateY(-100px);
         }
 
         /* Área do produto */
@@ -362,10 +360,17 @@
             transform: scale(0.95);
         }
 
+        /* ===== ESPAÇO INFERIOR ===== */
+        .bottom-spacer {
+            flex-shrink: 0;
+            height: 40px;
+            background: white;
+        }
+
         /* ===== MEDIA QUERIES ===== */
         @media (max-height: 700px) {
             .content-wrapper {
-                margin-top: -80px;
+                transform: translateY(-80px);
             }
             .product-info {
                 padding: 8px 12px 4px 12px;
@@ -409,7 +414,7 @@
 
         @media (max-height: 580px) {
             .content-wrapper {
-                margin-top: -60px;
+                transform: translateY(-60px);
             }
             .product-info {
                 padding: 6px 10px 3px 10px;
@@ -499,7 +504,7 @@
 
         @media (max-height: 450px) {
             .content-wrapper {
-                margin-top: -40px;
+                transform: translateY(-40px);
             }
             .product-info {
                 padding: 4px 8px 2px 8px;
@@ -594,7 +599,7 @@
 
         @media (max-height: 350px) {
             .content-wrapper {
-                margin-top: -30px;
+                transform: translateY(-30px);
             }
             .product-info {
                 padding: 2px 6px 1px 6px;
@@ -708,7 +713,7 @@
                 padding: 2px 0;
             }
             .content-wrapper {
-                margin-top: -80px;
+                transform: translateY(-80px);
             }
         }
 
@@ -739,7 +744,7 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO QUE SOBE (informações + botão) -->
+        <!-- CONTEÚDO QUE SOBE USANDO TRANSFORM - DESCEU 50px -->
         <div class="content-wrapper">
 
             <div class="product-info">
@@ -783,6 +788,9 @@
 
         </div>
 
+        <!-- ESPAÇO INFERIOR -->
+        <div class="bottom-spacer"></div>
+
     </div>
 
     <script>
@@ -792,14 +800,15 @@
                 const card = document.querySelector('.shopee-card');
                 const videoWrapper = document.getElementById('videoWrapper');
                 const contentWrapper = document.querySelector('.content-wrapper');
+                const bottomSpacer = document.querySelector('.bottom-spacer');
 
                 if (!card || !videoWrapper || !contentWrapper) return;
 
                 const cardHeight = card.clientHeight;
                 const contentHeight = contentWrapper.offsetHeight;
-                const paddingBottom = 40;
+                const spacerHeight = bottomSpacer ? bottomSpacer.offsetHeight : 0;
 
-                let videoHeight = cardHeight - contentHeight - paddingBottom;
+                let videoHeight = cardHeight - contentHeight - spacerHeight;
 
                 if (videoHeight < 60) {
                     videoHeight = 60;
@@ -910,7 +919,7 @@
                 console.log('🔗 Link da Shopee: ' + shopeeLink.href);
             }
 
-            console.log('📱 Botão e informações sobem JUNTOS 100px (corrigido)');
+            console.log('📱 Bloco desceu 50px (agora sobe 100px)');
         })();
     </script>
 </body>
