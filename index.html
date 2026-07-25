@@ -148,23 +148,22 @@
             color: #ee4d2d;
         }
 
-        /* ===== BLOCO DE CONTEÚDO - POSIÇÃO FIXA NA PARTE INFERIOR ===== */
+        /* ===== BLOCO DE CONTEÚDO - CANTOS ARREDONDADOS EM TODOS OS LADOS ===== */
         .content-wrapper {
             position: absolute;
             bottom: 60px;
-            /* subiu 20px (antes era 40px) */
-            left: 0;
-            right: 0;
+            left: 12px;
+            right: 12px;
             z-index: 2;
             background: white;
             padding-bottom: 8px;
-            /* CANTOS ARREDONDADOS */
-            border-radius: 20px 20px 0 0;
+            /* CANTOS ARREDONDADOS EM TODOS OS LADOS */
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
         }
 
-        /* Área do produto */
+        /* Área do produto - SUBIU 10px */
         .product-info {
             padding: 14px 16px 6px 16px;
             background: white;
@@ -172,6 +171,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            /* SUBIU 10px */
+            margin-top: -10px;
         }
 
         .product-name {
@@ -369,11 +370,14 @@
         @media (max-height: 700px) {
             .content-wrapper {
                 bottom: 48px;
-                border-radius: 16px 16px 0 0;
+                left: 10px;
+                right: 10px;
+                border-radius: 16px;
             }
             .product-info {
                 padding: 10px 14px 4px 14px;
                 min-height: 100px;
+                margin-top: -8px;
             }
             .product-name {
                 font-size: clamp(0.7rem, 2vw, 0.85rem);
@@ -414,11 +418,14 @@
         @media (max-height: 580px) {
             .content-wrapper {
                 bottom: 32px;
-                border-radius: 14px 14px 0 0;
+                left: 8px;
+                right: 8px;
+                border-radius: 14px;
             }
             .product-info {
                 padding: 8px 12px 3px 12px;
                 min-height: 85px;
+                margin-top: -6px;
             }
             .product-name {
                 font-size: clamp(0.6rem, 1.8vw, 0.75rem);
@@ -505,11 +512,14 @@
         @media (max-height: 450px) {
             .content-wrapper {
                 bottom: 20px;
-                border-radius: 12px 12px 0 0;
+                left: 6px;
+                right: 6px;
+                border-radius: 12px;
             }
             .product-info {
                 padding: 6px 10px 2px 10px;
                 min-height: 65px;
+                margin-top: -4px;
             }
             .product-name {
                 font-size: clamp(0.5rem, 1.5vw, 0.6rem);
@@ -601,11 +611,14 @@
         @media (max-height: 350px) {
             .content-wrapper {
                 bottom: 12px;
-                border-radius: 10px 10px 0 0;
+                left: 4px;
+                right: 4px;
+                border-radius: 10px;
             }
             .product-info {
                 padding: 4px 8px 2px 8px;
                 min-height: 50px;
+                margin-top: -2px;
             }
             .product-name {
                 font-size: clamp(0.4rem, 1.2vw, 0.5rem);
@@ -716,7 +729,12 @@
             }
             .content-wrapper {
                 bottom: 40px;
-                border-radius: 14px 14px 0 0;
+                left: 6px;
+                right: 6px;
+                border-radius: 14px;
+            }
+            .product-info {
+                margin-top: -8px;
             }
         }
 
@@ -747,7 +765,7 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO POSICIONADO NA PARTE INFERIOR COM CANTOS ARREDONDADOS -->
+        <!-- CONTEÚDO COM CANTOS ARREDONDADOS EM TODOS OS LADOS -->
         <div class="content-wrapper">
 
             <div class="product-info">
@@ -917,7 +935,7 @@
                 console.log('🔗 Link da Shopee: ' + shopeeLink.href);
             }
 
-            console.log('📱 Bloco subiu 20px e cantos arredondados');
+            console.log('📱 Cantos arredondados em todos os lados e informações subiram 10px');
         })();
     </script>
 </body>
