@@ -58,6 +58,8 @@
             z-index: 2;
             position: relative;
             flex: 0 0 auto;
+            /* SUBIU 50px */
+            margin-top: -50px;
         }
 
         /* Título do produto */
@@ -280,11 +282,11 @@
             object-fit: cover;
         }
 
-        /* LOGO SOBREPOSTA AO VÍDEO - desceu 40px */
+        /* LOGO SOBREPOSTA AO VÍDEO - desceu mais 30px (antes 48px, agora 78px) */
         .logo-overlay {
             position: absolute;
-            top: 48px;
-            /* antes era 8px, agora +40px = 48px */
+            top: 78px;
+            /* 48px + 30px = 78px */
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -364,7 +366,7 @@
             color: #ee4d2d;
         }
 
-        /* ===== MEDIA QUERIES - VÍDEO ENCOLHE, INFORMAÇÕES E BOTÃO FICAM ===== */
+        /* ===== MEDIA QUERIES ===== */
         @media (max-height: 700px) {
             .shopee-card {
                 padding-bottom: 35px;
@@ -372,6 +374,8 @@
             .product-info {
                 padding: 8px 12px 4px 12px;
                 min-height: 110px;
+                margin-top: -40px;
+                /* reduzido proporcionalmente */
             }
             .product-name {
                 font-size: clamp(0.7rem, 2vw, 0.85rem);
@@ -398,8 +402,8 @@
             }
             .logo-overlay {
                 max-width: 55px;
-                top: 42px;
-                /* 2px + 40px */
+                top: 68px;
+                /* 38px + 30px */
             }
             .play-button {
                 width: 42px;
@@ -420,6 +424,7 @@
             .product-info {
                 padding: 6px 10px 3px 10px;
                 min-height: 90px;
+                margin-top: -30px;
             }
             .product-name {
                 font-size: clamp(0.6rem, 1.8vw, 0.75rem);
@@ -492,8 +497,8 @@
             }
             .logo-overlay {
                 max-width: 45px;
-                top: 36px;
-                /* -4px + 40px */
+                top: 58px;
+                /* 28px + 30px */
             }
             .play-button {
                 width: 35px;
@@ -514,6 +519,7 @@
             .product-info {
                 padding: 4px 8px 2px 8px;
                 min-height: 70px;
+                margin-top: -20px;
             }
             .product-name {
                 font-size: clamp(0.5rem, 1.5vw, 0.6rem);
@@ -591,8 +597,8 @@
             }
             .logo-overlay {
                 max-width: 35px;
-                top: 32px;
-                /* -8px + 40px */
+                top: 48px;
+                /* 18px + 30px */
             }
             .play-button {
                 width: 28px;
@@ -613,6 +619,7 @@
             .product-info {
                 padding: 2px 6px 1px 6px;
                 min-height: 55px;
+                margin-top: -15px;
             }
             .product-name {
                 font-size: clamp(0.4rem, 1.2vw, 0.5rem);
@@ -685,8 +692,8 @@
             }
             .logo-overlay {
                 max-width: 25px;
-                top: 28px;
-                /* -12px + 40px */
+                top: 38px;
+                /* 8px + 30px */
             }
             .play-button {
                 width: 20px;
@@ -703,8 +710,8 @@
         @media (max-width: 350px) {
             .logo-overlay {
                 max-width: 30px;
-                top: 44px;
-                /* 4px + 40px */
+                top: 74px;
+                /* 44px + 30px */
             }
             .product-name {
                 font-size: clamp(0.4rem, 1.3vw, 0.5rem);
@@ -728,6 +735,9 @@
             }
             .shopee-card {
                 padding-bottom: 18px;
+            }
+            .product-info {
+                margin-top: -40px;
             }
         }
 
@@ -764,7 +774,7 @@
             </div>
         </div>
 
-        <!-- INFORMAÇÕES DO PRODUTO - PRIORIDADE -->
+        <!-- INFORMAÇÕES DO PRODUTO - SUBIU 50px -->
         <div class="product-info">
             <div class="product-name">
                 <i class="fas fa-play-circle"></i>
@@ -824,9 +834,9 @@
                 const cardHeight = card.clientHeight;
                 const infoHeight = productInfo ? productInfo.offsetHeight : 0;
                 const btnHeight = shopeeBtn ? shopeeBtn.offsetHeight : 0;
-                const paddingBottom = 40; // mesmo valor do padding-bottom do card
+                const paddingBottom = 40;
 
-                // Calcula o espaço restante para o vídeo (desconta o padding inferior)
+                // Calcula o espaço restante para o vídeo
                 let videoHeight = cardHeight - infoHeight - btnHeight - paddingBottom;
 
                 // Garante um mínimo para o vídeo
@@ -838,7 +848,6 @@
                 videoWrapper.style.paddingTop = '0';
             }
 
-            // Ajusta ao carregar e ao redimensionar
             window.addEventListener('load', function() {
                 setTimeout(adjustVideoHeight, 30);
                 setTimeout(adjustVideoHeight, 100);
@@ -849,7 +858,6 @@
                 setTimeout(adjustVideoHeight, 30);
             });
 
-            // Observa mudanças no tamanho dos elementos
             if (window.ResizeObserver) {
                 const resizeObserver = new ResizeObserver(function() {
                     adjustVideoHeight();
@@ -941,7 +949,7 @@
                 console.log('🔗 Link da Shopee: ' + shopeeLink.href);
             }
 
-            console.log('📱 Espaço inferior de 40px e logo desceu 40px');
+            console.log('📱 Informações subiram 50px, logo desceu 30px');
         })();
     </script>
 </body>
