@@ -18,28 +18,27 @@
       background: #f5f5f5;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* alinhado ao topo */
       min-height: 100vh;
       margin: 0;
-      padding: 8px;
-      height: 100vh;
-      overflow: hidden;
+      padding: 0; /* sem padding para colar no topo */
+      overflow-x: hidden;
     }
 
     .shopee-card {
       max-width: 380px;
       width: 100%;
-      max-height: 98vh;
       background: #ffffff;
-      border-radius: 20px;
+      border-radius: 0 0 20px 20px; /* apenas bordas inferiores */
       box-shadow: 0 10px 32px rgba(0, 0, 0, 0.07), 0 2px 10px rgba(0, 0, 0, 0.03);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       height: auto;
+      margin-top: 0; /* colado no topo */
     }
 
-    /* Container do vídeo - com padding-top reduzido para aumentar o vídeo */
+    /* Container do vídeo - sem borda superior, colado no topo */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -48,7 +47,7 @@
       cursor: pointer;
       overflow: hidden;
       flex-shrink: 0;
-      border-top: 20px solid #ffffff;
+      border-top: none; /* removido */
     }
 
     .video-wrapper video {
@@ -101,7 +100,7 @@
       transition: all 0.3s ease;
       box-shadow: 0 4px 20px rgba(238, 77, 45, 0.4);
       pointer-events: auto;
-      opacity: 0; /* começa invisível */
+      opacity: 0;
     }
 
     .play-button:hover {
@@ -370,17 +369,12 @@
 
     /* Responsivo */
     @media (max-width: 400px) {
-      body {
-        padding: 4px;
-      }
       .shopee-card {
         max-width: 100%;
-        border-radius: 14px;
-        max-height: 100vh;
+        border-radius: 0 0 14px 14px;
       }
       .video-wrapper {
         padding-top: 135%;
-        border-top-width: 16px;
       }
       .logo-overlay {
         max-width: 65px;
@@ -443,7 +437,6 @@
     @media (max-height: 700px) {
       .video-wrapper {
         padding-top: 120%;
-        border-top-width: 14px;
       }
       .logo-overlay {
         max-width: 60px;
@@ -493,10 +486,10 @@
     @media (min-width: 600px) {
       .shopee-card {
         max-width: 420px;
+        border-radius: 0 0 20px 20px;
       }
       .video-wrapper {
         padding-top: 155%;
-        border-top-width: 24px;
       }
       .logo-overlay {
         max-width: 100px;
@@ -525,14 +518,14 @@
 
 <div class="shopee-card">
 
-  <!-- VÍDEO DE DESTAQUE – com LOGO SOBREPOSTA e borda superior -->
+  <!-- VÍDEO DE DESTAQUE – colado no topo, sem borda -->
   <div class="video-wrapper">
     <!-- Logo PNG sobreposta ao vídeo -->
     <div class="logo-overlay">
       <img src="imagen/LOGO PNG.png" alt="Logo da marca">
     </div>
 
-    <!-- Botão de play centralizado - começa invisível -->
+    <!-- Botão de play centralizado -->
     <div class="play-button" id="playButton">
       <i class="fas fa-play"></i>
     </div>
@@ -694,7 +687,7 @@
       console.log('🔗 Link da Shopee: ' + shopeeLink.href);
     }
 
-    console.log('📱 Vídeo com autoplay e loop');
+    console.log('📱 Vídeo colado no topo da página');
   })();
 </script>
 </body>
