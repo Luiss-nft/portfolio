@@ -1,942 +1,1733 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Destaque Vertical · Shopee</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escala 4x2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F5F6;
+    --surface:#FFFFFF;
+    --border:#E3E6E9;
+    --text:#15181C;
+    --text-muted:#767D87;
+    --text-faint:#A6ACB3;
+    --a:#2563EB;
+    --a-soft:#DBEAFE;
+    --b:#7C3AED;
+    --b-soft:#EDE9FE;
+    --c:#DC2626;
+    --c-soft:#FEE2E2;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --shadow: 0 1px 2px rgba(20,23,27,0.04), 0 8px 24px rgba(20,23,27,0.06);
+    --note-bg:#FFF9E6;
+    --note-border:#E8D8B0;
+    --cor-dia:#F59E0B;
+    --cor-noite:#3B82F6;
+    --cor-folga:#EF4444;
+  }
 
-        html,
-        body {
-            height: 100%;
-            overflow: hidden;
-        }
+  [data-theme="dark"]{
+    --bg:#1A1D23;
+    --surface:#24282F;
+    --border:#333840;
+    --text:#E8ECF0;
+    --text-muted:#9AA3AE;
+    --text-faint:#6B7480;
+    --a:#60A5FA;
+    --a-soft:#1E293B;
+    --b:#A78BFA;
+    --b-soft:#2D1B4E;
+    --c:#F87171;
+    --c-soft:#3B1A1A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+    --note-bg:#2D2A1E;
+    --note-border:#4A4530;
+    --cor-dia:#FBBF24;
+    --cor-noite:#60A5FA;
+    --cor-folga:#F87171;
+  }
 
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-        }
+  *{margin:0;padding:0;box-sizing:border-box;}
 
-        .shopee-card {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            max-height: 100vh;
-            background: #ffffff;
-            border-radius: 0;
-            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.07), 0 2px 10px rgba(0, 0, 0, 0.03);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+  html,body{height:100%;}
 
-        /* ===== VÍDEO - OCUPA TODO O ESPAÇO DISPONÍVEL ===== */
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            flex: 1 0 auto;
-            background: #0b0b0b;
-            cursor: pointer;
-            overflow: hidden;
-            min-height: 60px;
-        }
+  body{
+    font-family:'IBM Plex Sans', sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:32px 16px 40px;
+    -webkit-font-smoothing:antialiased;
+    transition:background .3s, color .3s;
+  }
 
-        .video-wrapper video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-            background: #000;
-            object-fit: cover;
-        }
+  button{font-family:inherit;cursor:pointer;}
 
-        /* LOGO SOBREPOSTA AO VÍDEO */
-        .logo-overlay {
-            position: absolute;
-            top: 78px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            max-width: 70px;
-            width: 18%;
-            height: auto;
-            pointer-events: none;
-        }
+  svg.icon{
+    width:18px;height:18px;
+    stroke:currentColor;
+    stroke-width:1.75;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    fill:none;
+    display:block;
+    flex-shrink:0;
+  }
 
-        .logo-overlay img {
-            width: 100%;
-            height: auto;
-            display: block;
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-        }
+  .app{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
 
-        /* Botão de play centralizado */
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 5;
-            width: 50px;
-            height: 50px;
-            background: rgba(238, 77, 45, 0.85);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(238, 77, 45, 0.4);
-            pointer-events: auto;
-            opacity: 0;
-        }
+  .app-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 4px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
 
-        .play-button:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-            background: rgba(238, 77, 45, 1);
-        }
+  .app-header .eyebrow{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:0.72rem;
+    font-weight:600;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+  }
 
-        .play-button i {
-            color: white;
-            font-size: 22px;
-            margin-left: 4px;
-        }
+  .app-header .today-date{
+    font-size:0.78rem;
+    color:var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
 
-        .play-button.visible {
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
+  .header-actions{
+    display:flex;
+    gap:6px;
+    align-items:center;
+  }
 
-        .play-button.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
+  .header-actions button{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:50%;
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:var(--shadow);
+  }
 
-        .video-wrapper .fallback-msg {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #eee;
-            background: #1a1a1a;
-            font-size: 14px;
-            padding: 20px;
-            text-align: center;
-        }
+  .header-actions button:hover{
+    border-color:var(--text);
+    color:var(--text);
+  }
 
-        .video-wrapper .fallback-msg i {
-            font-size: 40px;
-            margin-bottom: 10px;
-            color: #ee4d2d;
-        }
+  /* ===== CARD SLIDER ===== */
+  .card-wrapper{width:100%;overflow:hidden;border-radius:var(--radius-lg);}
 
-        /* ===== BLOCO DE CONTEÚDO - CANTOS ARREDONDADOS EM TODOS OS LADOS ===== */
-        .content-wrapper {
-            position: absolute;
-            bottom: 60px;
-            left: 12px;
-            right: 12px;
-            z-index: 2;
-            background: white;
-            padding-bottom: 8px;
-            /* CANTOS ARREDONDADOS EM TODOS OS LADOS */
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-        }
+  .cards-slider{
+    display:flex;
+    transition:transform .45s cubic-bezier(.65,0,.35,1);
+    width:100%;
+  }
 
-        /* Área do produto - SUBIU 10px */
-        .product-info {
-            padding: 14px 16px 6px 16px;
-            background: white;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            /* SUBIU 10px */
-            margin-top: -10px;
-        }
+  .turno-card{
+    min-width:100%;
+    flex-shrink:0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+    padding:22px 22px 18px;
+    position:relative;
+    overflow:hidden;
+    transition:background .3s, border .3s;
+  }
 
-        .product-name {
-            font-weight: 600;
-            font-size: clamp(0.8rem, 2.5vw, 1.0rem);
-            line-height: 1.3;
-            color: #222;
-            letter-spacing: -0.01em;
-            margin-bottom: 6px;
-        }
+  .turno-a{--accent:var(--a);--accent-soft:var(--a-soft);}
+  .turno-b{--accent:var(--b);--accent-soft:var(--b-soft);}
+  .turno-c{--accent:var(--c);--accent-soft:var(--c-soft);}
 
-        .product-name i {
-            color: #ee4d2d;
-            font-size: clamp(0.8rem, 2.5vw, 1.0rem);
-            margin-right: 4px;
-        }
+  .card-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
 
-        .promo-banner {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 4px 8px;
-            background: #fff6f3;
-            border-radius: 6px;
-            padding: 4px 10px;
-            margin-bottom: 6px;
-            border-left: 3px solid #ee4d2d;
-            min-height: 30px;
-        }
+  .icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    font-size:0.72rem;
+    font-weight:600;
+    letter-spacing:0.02em;
+    padding:7px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:.2s;
+  }
 
-        .free-shipping {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #ee4d2d;
-            color: white;
-            font-size: clamp(0.55rem, 1.6vw, 0.7rem);
-            font-weight: 700;
-            padding: 2px 10px;
-            border-radius: 16px;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-        }
+  .icon-btn:hover{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
+  }
 
-        .free-shipping i {
-            font-size: clamp(0.5rem, 1.4vw, 0.65rem);
-        }
+  .icon-btn.icon-only{padding:8px;}
 
-        .countdown-text {
-            font-size: clamp(0.55rem, 1.6vw, 0.7rem);
-            color: #555;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+  .card-identity{
+    display:flex;
+    align-items:flex-end;
+    gap:14px;
+    margin-bottom:14px;
+  }
 
-        .countdown-text i {
-            color: #ee4d2d;
-            font-size: clamp(0.5rem, 1.4vw, 0.65rem);
-        }
+  .letra{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(2.6rem, 12vw, 3.2rem);
+    font-weight:700;
+    line-height:0.9;
+    color:var(--accent);
+  }
 
-        .countdown-timer {
-            display: inline-flex;
-            align-items: center;
-            gap: 2px;
-            font-weight: 700;
-            font-size: clamp(0.65rem, 2vw, 0.85rem);
-            color: #ee4d2d;
-            background: #fff0ed;
-            padding: 2px 10px;
-            border-radius: 16px;
-            letter-spacing: 0.3px;
-            font-variant-numeric: tabular-nums;
-        }
+  .identity-meta{padding-bottom:4px;}
 
-        .countdown-timer .time-block {
-            display: inline-flex;
-            align-items: center;
-            gap: 1px;
-        }
+  .equipe{
+    font-size:0.95rem;
+    font-weight:600;
+    color:var(--text);
+  }
 
-        .countdown-timer .time-sep {
-            color: #ee4d2d;
-            font-weight: 300;
-            margin: 0 1px;
-        }
+  .equipe-label{
+    font-size:0.72rem;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
 
-        .price-block {
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 6px 12px;
-            margin-top: 2px;
-            min-height: 36px;
-        }
+  .status-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 14px;
+    border-radius:999px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:0.86rem;
+    font-weight:600;
+    margin-bottom:16px;
+  }
 
-        .price-current {
-            font-size: clamp(1.6rem, 5.5vw, 2.4rem);
-            font-weight: 700;
-            color: #ee4d2d;
-            letter-spacing: -1px;
-            line-height: 1.1;
-            display: flex;
-            align-items: baseline;
-        }
+  .status-chip svg{width:16px;height:16px;}
 
-        .price-current .currency-symbol {
-            font-size: clamp(0.9rem, 2.8vw, 1.2rem);
-            font-weight: 700;
-            margin-right: 2px;
-        }
+  /* cycle tracker */
+  .cycle{
+    display:flex;
+    gap:5px;
+    margin-bottom:16px;
+  }
 
-        .price-current .integer-part {
-            font-size: clamp(1.6rem, 5.5vw, 2.4rem);
-            font-weight: 700;
-        }
+  .cycle .seg{
+    flex:1;
+    height:5px;
+    border-radius:3px;
+    background:var(--border);
+  }
 
-        .price-current .decimal-part {
-            font-size: clamp(1.0rem, 3.2vw, 1.4rem);
-            font-weight: 700;
-            margin-left: 1px;
-        }
+  .cycle .seg.active{background:var(--accent);}
 
-        .price-original {
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-            color: #999;
-            text-decoration: line-through;
-            font-weight: 400;
-        }
+  .cycle-labels{
+    display:flex;
+    gap:5px;
+    margin-top:5px;
+    margin-bottom:2px;
+  }
 
-        .discount-badge {
-            display: inline-flex;
-            align-items: center;
-            background: #ee4d2d;
-            color: white;
-            font-size: clamp(0.6rem, 1.8vw, 0.8rem);
-            font-weight: 700;
-            padding: 2px 12px;
-            border-radius: 30px;
-            letter-spacing: 0.3px;
-            gap: 4px;
-            white-space: nowrap;
-        }
+  .cycle-labels span{
+    flex:1;
+    text-align:center;
+    font-size:0.6rem;
+    font-weight:600;
+    color:var(--text-faint);
+    letter-spacing:0.03em;
+  }
 
-        .discount-badge i {
-            font-size: clamp(0.5rem, 1.5vw, 0.7rem);
-        }
+  .cycle-labels span.active-label{color:var(--accent);}
 
-        /* ===== BOTÃO VER NA SHOPEE ===== */
-        .shopee-credit {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 6px 16px 0px 16px;
-            padding: 12px 0;
-            background: #ee4d2d;
-            color: white;
-            font-size: clamp(0.8rem, 2.5vw, 1.0rem);
-            font-weight: 600;
-            border-radius: 40px;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: background 0.15s, transform 0.1s;
-            box-shadow: 0 2px 8px rgba(238, 77, 45, 0.2);
-            gap: 8px;
-            border: none;
-            text-decoration: none;
-            flex-shrink: 0;
-            min-height: 48px;
-        }
+  .trabalhadores{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+    max-height:240px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
 
-        .shopee-credit a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: white;
-            text-decoration: none;
-            width: 100%;
-            height: 100%;
-            padding: 12px 0;
-        }
+  .trabalhadores::-webkit-scrollbar{width:4px;}
+  .trabalhadores::-webkit-scrollbar-track{background:transparent;}
+  .trabalhadores::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
 
-        .shopee-credit:hover {
-            background: #d63e1e;
-            transform: scale(0.98);
-        }
+  .trabalhador-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 12px;
+    border-radius:var(--radius-sm);
+    background:var(--bg);
+    font-size:0.88rem;
+    transition:background .2s;
+  }
 
-        .shopee-credit:active {
-            transform: scale(0.95);
-        }
+  .trabalhador-item:hover{
+    background:var(--border);
+  }
 
-        /* ===== MEDIA QUERIES ===== */
-        @media (max-height: 700px) {
-            .content-wrapper {
-                bottom: 48px;
-                left: 10px;
-                right: 10px;
-                border-radius: 16px;
-            }
-            .product-info {
-                padding: 10px 14px 4px 14px;
-                min-height: 100px;
-                margin-top: -8px;
-            }
-            .product-name {
-                font-size: clamp(0.7rem, 2vw, 0.85rem);
-                margin-bottom: 4px;
-            }
-            .promo-banner {
-                padding: 3px 8px;
-                margin-bottom: 4px;
-                min-height: 26px;
-                gap: 3px 6px;
-            }
-            .price-block {
-                gap: 4px 10px;
-                min-height: 30px;
-            }
-            .shopee-credit {
-                padding: 8px 0;
-                margin: 4px 14px 0px 14px;
-                min-height: 40px;
-                font-size: clamp(0.7rem, 2vw, 0.85rem);
-            }
-            .shopee-credit a {
-                padding: 8px 0;
-            }
-            .logo-overlay {
-                max-width: 55px;
-                top: 68px;
-            }
-            .play-button {
-                width: 42px;
-                height: 42px;
-            }
-            .play-button i {
-                font-size: 18px;
-            }
-        }
+  .trabalhador-item .who{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:var(--text);
+  }
 
-        @media (max-height: 580px) {
-            .content-wrapper {
-                bottom: 32px;
-                left: 8px;
-                right: 8px;
-                border-radius: 14px;
-            }
-            .product-info {
-                padding: 8px 12px 3px 12px;
-                min-height: 85px;
-                margin-top: -6px;
-            }
-            .product-name {
-                font-size: clamp(0.6rem, 1.8vw, 0.75rem);
-                margin-bottom: 2px;
-            }
-            .product-name i {
-                font-size: clamp(0.6rem, 1.8vw, 0.75rem);
-            }
-            .promo-banner {
-                padding: 2px 6px;
-                margin-bottom: 3px;
-                min-height: 22px;
-                gap: 2px 4px;
-                border-left-width: 2px;
-            }
-            .free-shipping {
-                font-size: clamp(0.45rem, 1.3vw, 0.55rem);
-                padding: 1px 6px;
-            }
-            .free-shipping i {
-                font-size: clamp(0.4rem, 1.1vw, 0.5rem);
-            }
-            .countdown-text {
-                font-size: clamp(0.45rem, 1.3vw, 0.55rem);
-            }
-            .countdown-text i {
-                font-size: clamp(0.4rem, 1.1vw, 0.5rem);
-            }
-            .countdown-timer {
-                font-size: clamp(0.5rem, 1.5vw, 0.65rem);
-                padding: 1px 6px;
-            }
-            .price-block {
-                gap: 3px 8px;
-                min-height: 26px;
-            }
-            .price-current {
-                font-size: clamp(1.3rem, 4.5vw, 1.8rem);
-            }
-            .price-current .integer-part {
-                font-size: clamp(1.3rem, 4.5vw, 1.8rem);
-            }
-            .price-current .decimal-part {
-                font-size: clamp(0.8rem, 2.5vw, 1.0rem);
-            }
-            .price-current .currency-symbol {
-                font-size: clamp(0.7rem, 2.2vw, 0.9rem);
-            }
-            .price-original {
-                font-size: clamp(0.55rem, 1.6vw, 0.7rem);
-            }
-            .discount-badge {
-                font-size: clamp(0.5rem, 1.4vw, 0.6rem);
-                padding: 1px 8px;
-            }
-            .discount-badge i {
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-            }
-            .shopee-credit {
-                padding: 6px 0;
-                margin: 3px 12px 0px 12px;
-                min-height: 34px;
-                font-size: clamp(0.6rem, 1.8vw, 0.75rem);
-            }
-            .shopee-credit a {
-                padding: 6px 0;
-            }
-            .shopee-credit i {
-                font-size: clamp(0.6rem, 1.8vw, 0.75rem);
-            }
-            .logo-overlay {
-                max-width: 45px;
-                top: 58px;
-            }
-            .play-button {
-                width: 35px;
-                height: 35px;
-            }
-            .play-button i {
-                font-size: 15px;
-            }
-        }
+  .trabalhador-item .who svg{
+    color:var(--text-faint);
+  }
 
-        @media (max-height: 450px) {
-            .content-wrapper {
-                bottom: 20px;
-                left: 6px;
-                right: 6px;
-                border-radius: 12px;
-            }
-            .product-info {
-                padding: 6px 10px 2px 10px;
-                min-height: 65px;
-                margin-top: -4px;
-            }
-            .product-name {
-                font-size: clamp(0.5rem, 1.5vw, 0.6rem);
-                margin-bottom: 1px;
-            }
-            .product-name i {
-                font-size: clamp(0.5rem, 1.5vw, 0.6rem);
-            }
-            .promo-banner {
-                padding: 1px 4px;
-                margin-bottom: 2px;
-                min-height: 16px;
-                gap: 1px 3px;
-                border-left-width: 2px;
-                border-radius: 4px;
-            }
-            .free-shipping {
-                font-size: clamp(0.35rem, 1vw, 0.45rem);
-                padding: 0px 4px;
-                border-radius: 12px;
-            }
-            .free-shipping i {
-                font-size: clamp(0.3rem, 0.9vw, 0.4rem);
-            }
-            .countdown-text {
-                font-size: clamp(0.35rem, 1vw, 0.45rem);
-            }
-            .countdown-text i {
-                font-size: clamp(0.3rem, 0.9vw, 0.4rem);
-            }
-            .countdown-timer {
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-                padding: 0px 4px;
-                border-radius: 12px;
-            }
-            .price-block {
-                gap: 2px 6px;
-                min-height: 18px;
-            }
-            .price-current {
-                font-size: clamp(1.0rem, 3.5vw, 1.3rem);
-            }
-            .price-current .integer-part {
-                font-size: clamp(1.0rem, 3.5vw, 1.3rem);
-            }
-            .price-current .decimal-part {
-                font-size: clamp(0.6rem, 2vw, 0.75rem);
-            }
-            .price-current .currency-symbol {
-                font-size: clamp(0.5rem, 1.8vw, 0.65rem);
-            }
-            .price-original {
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-            }
-            .discount-badge {
-                font-size: clamp(0.4rem, 1.1vw, 0.5rem);
-                padding: 0px 6px;
-                border-radius: 20px;
-            }
-            .discount-badge i {
-                font-size: clamp(0.35rem, 1vw, 0.45rem);
-            }
-            .shopee-credit {
-                padding: 4px 0;
-                margin: 2px 10px 0px 10px;
-                min-height: 26px;
-                font-size: clamp(0.5rem, 1.5vw, 0.6rem);
-                border-radius: 30px;
-            }
-            .shopee-credit a {
-                padding: 4px 0;
-            }
-            .shopee-credit i {
-                font-size: clamp(0.5rem, 1.5vw, 0.6rem);
-            }
-            .logo-overlay {
-                max-width: 35px;
-                top: 48px;
-            }
-            .play-button {
-                width: 28px;
-                height: 28px;
-            }
-            .play-button i {
-                font-size: 12px;
-            }
-        }
+  .trabalhador-item .matricula{
+    color:var(--text-faint);
+    font-size:0.78rem;
+    font-variant-numeric:tabular-nums;
+  }
 
-        @media (max-height: 350px) {
-            .content-wrapper {
-                bottom: 12px;
-                left: 4px;
-                right: 4px;
-                border-radius: 10px;
-            }
-            .product-info {
-                padding: 4px 8px 2px 8px;
-                min-height: 50px;
-                margin-top: -2px;
-            }
-            .product-name {
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-                margin-bottom: 1px;
-            }
-            .product-name i {
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-            }
-            .promo-banner {
-                padding: 1px 3px;
-                margin-bottom: 1px;
-                min-height: 14px;
-                gap: 1px 2px;
-                border-left-width: 1px;
-            }
-            .free-shipping {
-                font-size: clamp(0.3rem, 0.8vw, 0.35rem);
-                padding: 0px 3px;
-            }
-            .free-shipping i {
-                font-size: clamp(0.25rem, 0.7vw, 0.3rem);
-            }
-            .countdown-text {
-                font-size: clamp(0.3rem, 0.8vw, 0.35rem);
-            }
-            .countdown-text i {
-                font-size: clamp(0.25rem, 0.7vw, 0.3rem);
-            }
-            .countdown-timer {
-                font-size: clamp(0.3rem, 0.9vw, 0.4rem);
-                padding: 0px 3px;
-            }
-            .price-block {
-                gap: 1px 4px;
-                min-height: 14px;
-            }
-            .price-current {
-                font-size: clamp(0.7rem, 2.5vw, 1.0rem);
-            }
-            .price-current .integer-part {
-                font-size: clamp(0.7rem, 2.5vw, 1.0rem);
-            }
-            .price-current .decimal-part {
-                font-size: clamp(0.4rem, 1.5vw, 0.55rem);
-            }
-            .price-current .currency-symbol {
-                font-size: clamp(0.35rem, 1.3vw, 0.5rem);
-            }
-            .price-original {
-                font-size: clamp(0.3rem, 1vw, 0.4rem);
-            }
-            .discount-badge {
-                font-size: clamp(0.3rem, 0.9vw, 0.4rem);
-                padding: 0px 4px;
-            }
-            .discount-badge i {
-                font-size: clamp(0.25rem, 0.8vw, 0.35rem);
-            }
-            .shopee-credit {
-                padding: 2px 0;
-                margin: 1px 8px 0px 8px;
-                min-height: 20px;
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-            }
-            .shopee-credit a {
-                padding: 2px 0;
-            }
-            .shopee-credit i {
-                font-size: clamp(0.4rem, 1.2vw, 0.5rem);
-            }
-            .logo-overlay {
-                max-width: 25px;
-                top: 38px;
-            }
-            .play-button {
-                width: 20px;
-                height: 20px;
-            }
-            .play-button i {
-                font-size: 9px;
-            }
-        }
+  .trabalhador-item .status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display:inline-block;
+    flex-shrink:0;
+  }
 
-        @media (max-width: 350px) {
-            .logo-overlay {
-                max-width: 30px;
-                top: 74px;
-            }
-            .product-name {
-                font-size: clamp(0.4rem, 1.3vw, 0.5rem);
-            }
-            .price-current {
-                font-size: clamp(0.7rem, 3vw, 1.0rem);
-            }
-            .price-current .integer-part {
-                font-size: clamp(0.7rem, 3vw, 1.0rem);
-            }
-            .price-current .decimal-part {
-                font-size: clamp(0.4rem, 1.7vw, 0.55rem);
-            }
-            .shopee-credit {
-                font-size: clamp(0.4rem, 1.3vw, 0.5rem);
-                min-height: 22px;
-                padding: 2px 0;
-            }
-            .shopee-credit a {
-                padding: 2px 0;
-            }
-            .content-wrapper {
-                bottom: 40px;
-                left: 6px;
-                right: 6px;
-                border-radius: 14px;
-            }
-            .product-info {
-                margin-top: -8px;
-            }
-        }
+  .trabalhador-item .status-dot.presente{
+    background:#22C55E;
+  }
 
-        .fa-play-circle {
-            color: #ee4d2d;
-        }
-    </style>
+  .trabalhador-item .status-dot.folga{
+    background:#F59E0B;
+  }
+
+  .contador-trabalhadores{
+    font-size:0.72rem;
+    color:var(--text-faint);
+    text-align:right;
+    padding:4px 6px 0 0;
+  }
+
+  /* ===== NAV ===== */
+  .navegacao{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+  }
+
+  .nav-btn{
+    width:42px;height:42px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:var(--shadow);
+  }
+
+  .nav-btn:hover{border-color:var(--text);}
+
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none;}
+  .nav-btn:disabled:hover{border-color:var(--border);}
+
+  .indicador{display:flex;gap:7px;align-items:center;}
+
+  .indicador span{
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--border);
+    transition:.25s;
+  }
+
+  .indicador span.active{
+    background:var(--text);
+    width:20px;
+    border-radius:4px;
+  }
+
+  /* ===== DAY CONTROLS ===== */
+  .controles-dia{display:flex;gap:10px;width:100%;}
+
+  .controles-dia button{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px 14px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    font-size:0.86rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:var(--shadow);
+  }
+
+  .controles-dia .btn-hoje{color:var(--a);}
+  .controles-dia .btn-hoje:hover{background:var(--a-soft);border-color:var(--a);}
+
+  .controles-dia .btn-avancar{background:var(--text);color:#fff;border-color:var(--text);}
+  .controles-dia .btn-avancar:hover{opacity:.85;}
+
+  .info-turno{
+    text-align:center;
+    color:var(--text-faint);
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+  }
+
+  /* ===== MODALS ===== */
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(20,23,27,0.45);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+  }
+
+  .modal-overlay.active{display:flex;}
+
+  .modal{
+    background:var(--surface);
+    border-radius:var(--radius-lg);
+    padding:22px;
+    max-width:440px;
+    width:100%;
+    max-height:88vh;
+    overflow-y:auto;
+    box-shadow:0 24px 60px rgba(20,23,27,0.28);
+    transition:background .3s;
+  }
+
+  .modal::-webkit-scrollbar{width:4px;}
+  .modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+
+  .modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .modal-header h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:1.02rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+
+  .modal-header h2 svg{color:var(--text-muted);}
+
+  .fechar{
+    width:32px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    background:var(--bg);
+    border:none;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:.2s;
+  }
+
+  .fechar:hover{background:var(--border);color:var(--text);}
+
+  .calendario-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+
+  .calendario-nav button{
+    width:32px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:50%;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:.2s;
+  }
+
+  .calendario-nav button:hover{border-color:var(--text);color:var(--text);}
+
+  .mes-label{
+    font-size:0.92rem;
+    font-weight:600;
+    text-transform:capitalize;
+  }
+
+  .calendario-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+  }
+
+  .cal-header{
+    text-align:center;
+    color:var(--text-faint);
+    font-size:0.62rem;
+    font-weight:600;
+    padding:6px 2px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+
+  .cal-dia{
+    background:var(--bg);
+    border-radius:10px;
+    padding:8px 2px;
+    text-align:center;
+    min-height:54px;
+    border:1.5px solid transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+  }
+
+  .cal-dia .numero{
+    font-size:0.8rem;
+    color:var(--text-muted);
+    font-variant-numeric:tabular-nums;
+    font-weight:600;
+  }
+
+  .cal-dia svg{
+    width:15px;
+    height:15px;
+  }
+
+  /* Cores específicas para cada status no calendário - APENAS ÍCONES */
+  .cal-dia.status-dia svg{
+    stroke:var(--cor-dia);
+    fill:var(--cor-dia);
+  }
+
+  .cal-dia.status-noite svg{
+    stroke:var(--cor-noite);
+    fill:var(--cor-noite);
+  }
+
+  .cal-dia.status-folga svg{
+    stroke:var(--cor-folga);
+    fill:var(--cor-folga);
+  }
+
+  .cal-dia.hoje{
+    border-color:var(--text);
+    background:var(--surface);
+  }
+  .cal-dia.hoje .numero{
+    font-weight:700;
+  }
+
+  .cal-legenda{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+
+  .cal-legenda span{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:0.74rem;
+    color:var(--text-muted);
+  }
+
+  .cal-legenda svg{
+    width:14px;
+    height:14px;
+  }
+
+  .cal-legenda .legenda-dia svg{
+    stroke:var(--cor-dia);
+    fill:var(--cor-dia);
+  }
+
+  .cal-legenda .legenda-noite svg{
+    stroke:var(--cor-noite);
+    fill:var(--cor-noite);
+  }
+
+  .cal-legenda .legenda-folga svg{
+    stroke:var(--cor-folga);
+    fill:var(--cor-folga);
+  }
+
+  /* ===== O.S MODAL ===== */
+  .item-os{
+    display:flex;
+    gap:12px;
+    padding:13px 4px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .item-os:last-child{border-bottom:none;}
+
+  .item-os .os-icon{
+    width:36px;height:36px;
+    border-radius:10px;
+    background:var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-muted);
+    flex-shrink:0;
+  }
+
+  .item-os .local{font-weight:600;color:var(--text);font-size:0.94rem;}
+  .item-os .os-codigo{color:var(--a);font-size:0.78rem;font-weight:600;margin-top:2px;}
+  .item-os .lotes{color:var(--text-faint);font-size:0.76rem;margin-top:5px;display:flex;flex-wrap:wrap;gap:4px;}
+
+  .item-os .lotes span{
+    background:var(--bg);
+    padding:2px 8px;
+    border-radius:6px;
+    color:var(--text-muted);
+  }
+
+  /* ===== NOTE / ALARM ===== */
+  .note-container{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:16px;
+    box-shadow:var(--shadow);
+    transition:background .3s, border .3s;
+  }
+
+  .note-container .note-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+
+  .note-container .note-header h3{
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--text-muted);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .note-container .note-header .note-actions{
+    display:flex;
+    gap:6px;
+  }
+
+  .note-container .note-header .note-actions button{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:50%;
+    width:30px;
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:.2s;
+  }
+
+  .note-container .note-header .note-actions button:hover{
+    border-color:var(--text);
+    color:var(--text);
+  }
+
+  .note-container .note-header .note-actions button.active-alarm{
+    background:var(--a-soft);
+    border-color:var(--a);
+    color:var(--a);
+  }
+
+  .note-textarea{
+    width:100%;
+    min-height:70px;
+    background:var(--note-bg);
+    border:1px solid var(--note-border);
+    border-radius:var(--radius-sm);
+    padding:10px 12px;
+    font-size:0.88rem;
+    font-family:inherit;
+    color:var(--text);
+    resize:vertical;
+    transition:background .3s, border .3s, color .3s;
+  }
+
+  .note-textarea:focus{
+    outline:none;
+    border-color:var(--a);
+  }
+
+  .note-alarm-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:8px;
+    font-size:0.72rem;
+    color:var(--text-faint);
+    flex-wrap:wrap;
+  }
+
+  .note-alarm-info .alarm-status{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-weight:500;
+  }
+
+  .note-alarm-info .alarm-status.active{
+    color:var(--a);
+  }
+
+  .note-alarm-info .alarm-countdown{
+    color:var(--text-muted);
+  }
+
+  /* ===== MODAL NOTAS ===== */
+  .note-modal-text{
+    width:100%;
+    min-height:120px;
+    background:var(--note-bg);
+    border:1px solid var(--note-border);
+    border-radius:var(--radius-sm);
+    padding:12px;
+    font-size:0.92rem;
+    font-family:inherit;
+    color:var(--text);
+    resize:vertical;
+    transition:background .3s, border .3s, color .3s;
+  }
+
+  .note-modal-text:focus{
+    outline:none;
+    border-color:var(--a);
+  }
+
+  .note-modal-options{
+    margin-top:14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+  }
+
+  .note-modal-options label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:0.82rem;
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+
+  .note-modal-options input[type="checkbox"]{
+    width:16px;
+    height:16px;
+    accent-color:var(--a);
+    cursor:pointer;
+  }
+
+  .note-modal-options .alarm-interval{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-left:auto;
+  }
+
+  .note-modal-options .alarm-interval select{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:4px 8px;
+    font-size:0.8rem;
+    color:var(--text);
+    font-family:inherit;
+  }
+
+  .note-modal-options .alarm-interval select:focus{
+    outline:none;
+    border-color:var(--a);
+  }
+
+  .note-modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+
+  .note-modal-actions button{
+    flex:1;
+    padding:10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+    transition:.2s;
+  }
+
+  .note-modal-actions .btn-save{
+    background:var(--text);
+    color:#fff;
+    border-color:var(--text);
+  }
+
+  .note-modal-actions .btn-save:hover{opacity:.85;}
+
+  .loading-message{
+    text-align:center;
+    padding:20px;
+    color:var(--text-faint);
+    font-size:0.9rem;
+  }
+
+  @media (max-width:380px){
+    .turno-card{padding:18px 16px 16px;}
+    .nav-btn{width:38px;height:38px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .cards-slider{transition:none;}
+  }
+</style>
 </head>
 <body>
+<div class="app">
 
-    <div class="shopee-card">
+  <div class="app-header">
+    <span class="eyebrow">Escala 4×2</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="today-date" id="dataAtual"></span>
+      <div class="header-actions">
+        <button onclick="toggleTheme()" title="Alternar tema">
+          <svg class="icon" viewBox="0 0 24 24" id="themeIcon"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+        </button>
+        <button onclick="abrirNoteModal()" title="Bloco de notas / Alarme">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
-        <!-- VÍDEO -->
-        <div class="video-wrapper" id="videoWrapper">
-            <div class="logo-overlay">
-                <img src="imagen/LOGO PNG.png" alt="Logo da marca">
-            </div>
-            <div class="play-button" id="playButton">
-                <i class="fas fa-play"></i>
-            </div>
-            <video id="productVideo" muted playsinline preload="metadata" loop autoplay>
-                <source src="imagen/1.mp4" type="video/mp4">
-                Seu navegador não suporta vídeo.
-            </video>
-            <div class="fallback-msg" style="display: none;">
-                <i class="fas fa-play-circle"></i>
-                <p>Vídeo indisponível no momento</p>
-            </div>
+  <div class="card-wrapper">
+    <div class="cards-slider" id="cardsSlider">
+
+      <div class="turno-card turno-a">
+        <div class="card-top">
+          <button class="icon-btn" onclick="abrirOS()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+            O.S
+          </button>
+          <button class="icon-btn icon-only" onclick="abrirCalendario(667,'A')" title="Calendário do Turno A">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+          </button>
         </div>
-
-        <!-- CONTEÚDO COM CANTOS ARREDONDADOS EM TODOS OS LADOS -->
-        <div class="content-wrapper">
-
-            <div class="product-info">
-                <div class="product-name">
-                    <i class="fas fa-play-circle"></i>
-                    <strong>Smartwatch X Pro</strong> · Edição Limitada
-                </div>
-                <div class="promo-banner">
-                    <span class="free-shipping">
-                        <i class="fas fa-truck"></i> Frete Grátis
-                    </span>
-                    <span class="countdown-text">
-                        <i class="fas fa-clock"></i> Compre antes das:
-                    </span>
-                    <span class="countdown-timer" id="countdown">
-                        <span class="time-block">
-                            <span id="hours">02</span><span class="time-sep">:</span>
-                            <span id="minutes">45</span><span class="time-sep">:</span>
-                            <span id="seconds">30</span>
-                        </span>
-                    </span>
-                </div>
-                <div class="price-block">
-                    <span class="price-current">
-                        <span class="currency-symbol">R$</span>
-                        <span class="integer-part">249</span>
-                        <span class="decimal-part">,90</span>
-                    </span>
-                    <span class="price-original">R$ 499,00</span>
-                    <span class="discount-badge">
-                        <i class="fas fa-bolt"></i> -50%
-                    </span>
-                </div>
-            </div>
-
-            <div class="shopee-credit">
-                <a href="https://shopee.com.br/product/123456789/" target="_blank" id="shopeeLink">
-                    <i class="fas fa-shopping-bag"></i> Ver na Shopee
-                </a>
-            </div>
-
+        <div class="card-identity">
+          <span class="letra">A</span>
+          <div class="identity-meta">
+            <div class="equipe-label">Equipe</div>
+            <div class="equipe">667</div>
+          </div>
         </div>
+        <div class="status-chip" id="statusA"></div>
+        <div class="cycle" id="cycleA"></div>
+        <div class="cycle-labels" id="cycleLabelsA"></div>
+        <div class="trabalhadores" id="listaA"></div>
+      </div>
+
+      <div class="turno-card turno-b">
+        <div class="card-top">
+          <button class="icon-btn" onclick="abrirOS()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+            O.S
+          </button>
+          <button class="icon-btn icon-only" onclick="abrirCalendario(668,'B')" title="Calendário do Turno B">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+          </button>
+        </div>
+        <div class="card-identity">
+          <span class="letra">B</span>
+          <div class="identity-meta">
+            <div class="equipe-label">Equipe</div>
+            <div class="equipe">668</div>
+          </div>
+        </div>
+        <div class="status-chip" id="statusB"></div>
+        <div class="cycle" id="cycleB"></div>
+        <div class="cycle-labels" id="cycleLabelsB"></div>
+        <div class="trabalhadores" id="listaB"></div>
+      </div>
+
+      <div class="turno-card turno-c">
+        <div class="card-top">
+          <button class="icon-btn" onclick="abrirOS()">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+            O.S
+          </button>
+          <button class="icon-btn icon-only" onclick="abrirCalendario(669,'C')" title="Calendário do Turno C">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+          </button>
+        </div>
+        <div class="card-identity">
+          <span class="letra">C</span>
+          <div class="identity-meta">
+            <div class="equipe-label">Equipe</div>
+            <div class="equipe">669</div>
+          </div>
+        </div>
+        <div class="status-chip" id="statusC"></div>
+        <div class="cycle" id="cycleC"></div>
+        <div class="cycle-labels" id="cycleLabelsC"></div>
+        <div class="trabalhadores" id="listaC"></div>
+      </div>
 
     </div>
+  </div>
 
-    <script>
-        (function() {
-            // ===== AJUSTE DINÂMICO DO VÍDEO =====
-            function adjustVideoHeight() {
-                const card = document.querySelector('.shopee-card');
-                const videoWrapper = document.getElementById('videoWrapper');
-                const contentWrapper = document.querySelector('.content-wrapper');
+  <div class="navegacao">
+    <button class="nav-btn" id="btnPrev" onclick="mudarCard(-1)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="indicador">
+      <span class="active" data-index="0"></span>
+      <span data-index="1"></span>
+      <span data-index="2"></span>
+    </div>
+    <button class="nav-btn" id="btnNext" onclick="mudarCard(1)">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
 
-                if (!card || !videoWrapper || !contentWrapper) return;
+  <div class="controles-dia">
+    <button class="btn-hoje" onclick="irHoje()">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      Hoje
+    </button>
+    <button class="btn-avancar" onclick="avancarDia()">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M5 5v14l10-7L5 5Z"/><path d="M18 5v14"/></svg>
+      Avançar dia
+    </button>
+  </div>
 
-                const cardHeight = card.clientHeight;
-                const contentHeight = contentWrapper.offsetHeight;
+  <!-- Bloco de notas / Alarme -->
+  <div class="note-container" id="noteContainer">
+    <div class="note-header">
+      <h3>
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
+        Notas & Alarme
+      </h3>
+      <div class="note-actions">
+        <button id="alarmToggleBtn" onclick="toggleAlarme()" title="Ativar/Desativar alarme">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
+        </button>
+        <button onclick="abrirNoteModal()" title="Editar nota">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+    </div>
+    <textarea class="note-textarea" id="noteDisplay" readonly placeholder="Clique no lápis para editar sua nota..."></textarea>
+    <div class="note-alarm-info">
+      <span class="alarm-status" id="alarmStatus">
+        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
+        Alarme: Desligado
+      </span>
+      <span class="alarm-countdown" id="alarmCountdown"></span>
+    </div>
+  </div>
 
-                let videoHeight = cardHeight - contentHeight;
+  <div class="info-turno" id="infoTurno">Turno A · Equipe 667</div>
+</div>
 
-                if (videoHeight < 60) {
-                    videoHeight = 60;
-                }
+<!-- MODAL CALENDÁRIO -->
+<div class="modal-overlay" id="modalCalendario">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+        <span id="modalTitulo">Turno A (667)</span>
+      </h2>
+      <button class="fechar" onclick="fecharCalendario()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="calendario-nav">
+      <button onclick="mudarMesCalendario(-1)"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <span class="mes-label" id="mesLabel">Julho 2026</span>
+      <button onclick="mudarMesCalendario(1)"><svg class="icon" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="calendario-grid" id="calendarioGrid"></div>
+    <div class="cal-legenda">
+      <span class="legenda-dia"><span id="legendaDia"></span></span>
+      <span class="legenda-noite"><span id="legendaNoite"></span></span>
+      <span class="legenda-folga"><span id="legendaFolga"></span></span>
+    </div>
+  </div>
+</div>
 
-                videoWrapper.style.height = videoHeight + 'px';
-                videoWrapper.style.paddingTop = '0';
-            }
+<!-- MODAL O.S -->
+<div class="modal-overlay" id="modalOS">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+        Ordens de Serviço
+      </h2>
+      <button class="fechar" onclick="fecharOS()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div id="listaOS"></div>
+  </div>
+</div>
 
-            window.addEventListener('load', function() {
-                setTimeout(adjustVideoHeight, 50);
-                setTimeout(adjustVideoHeight, 150);
-                setTimeout(adjustVideoHeight, 350);
-            });
+<!-- MODAL NOTAS / ALARME -->
+<div class="modal-overlay" id="modalNote">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
+        Nota & Alarme
+      </h2>
+      <button class="fechar" onclick="fecharNoteModal()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <textarea class="note-modal-text" id="noteModalText" placeholder="Digite sua nota aqui..."></textarea>
+    <div class="note-modal-options">
+      <label>
+        <input type="checkbox" id="alarmCheckbox">
+        Ativar alarme
+      </label>
+      <div class="alarm-interval">
+        <span>Intervalo:</span>
+        <select id="alarmInterval">
+          <option value="1">1 hora</option>
+          <option value="2">2 horas</option>
+          <option value="3" selected>3 horas</option>
+          <option value="4">4 horas</option>
+          <option value="6">6 horas</option>
+          <option value="8">8 horas</option>
+          <option value="12">12 horas</option>
+        </select>
+      </div>
+    </div>
+    <div class="note-modal-actions">
+      <button onclick="fecharNoteModal()">Cancelar</button>
+      <button class="btn-save" onclick="salvarNota()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-            window.addEventListener('resize', function() {
-                setTimeout(adjustVideoHeight, 50);
-            });
+<script>
+  // ====== ÍCONES ======
+  const ICON_SUN = '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>';
+  const ICON_MOON = '<svg class="icon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>';
+  const ICON_PAUSE = '<svg class="icon" viewBox="0 0 24 24"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg>';
+  const ICON_USER = '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>';
+  const ICON_HOME = '<svg class="icon" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9"/></svg>';
 
-            if (window.ResizeObserver) {
-                const resizeObserver = new ResizeObserver(function() {
-                    adjustVideoHeight();
-                });
-                const card = document.querySelector('.shopee-card');
-                if (card) {
-                    resizeObserver.observe(card);
-                }
-            }
+  // ====== DADOS REAIS ======
+  const workers = [
+    { nome: 'Eronildo', equipe: 667, matricula: '103043' },
+    { nome: 'Jacquerson', equipe: 667, matricula: '100380' },
+    { nome: 'José Carlos', equipe: 667, matricula: '27250' },
+    { nome: 'Luciano', equipe: 667, matricula: '103806' },
+    { nome: 'Reginaldo', equipe: 667, matricula: '105580' },
+    { nome: 'Willian', equipe: 667, matricula: '105593' },
 
-            // ===== CONTROLE DO VÍDEO =====
-            const video = document.getElementById('productVideo');
-            const playButton = document.getElementById('playButton');
+    { nome: 'André', equipe: 668, matricula: '109028' },
+    { nome: 'Clemilson', equipe: 668, matricula: '69827' },
+    { nome: 'Daciel', equipe: 668, matricula: '86373' },
+    { nome: 'Elias', equipe: 668, matricula: '105515' },
+    { nome: 'Jaelson', equipe: 668, matricula: '105537' },
+    { nome: 'José Wanderley', equipe: 668, matricula: '108652' },
+    { nome: 'Pedro Paulo', equipe: 668, matricula: '57758' },
 
-            if (video && playButton) {
-                playButton.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (video.paused) {
-                        video.play();
-                        playButton.classList.remove('visible');
-                        playButton.classList.add('hidden');
-                    } else {
-                        video.pause();
-                        playButton.classList.remove('hidden');
-                        playButton.classList.add('visible');
-                    }
-                });
+    { nome: 'Igor', equipe: 669, matricula: '105533' },
+    { nome: 'Edjair', equipe: 669, matricula: '61276' },
+    { nome: 'José', equipe: 669, matricula: '32076' },
+    { nome: 'Gilson', equipe: 669, matricula: '55418' },
+    { nome: 'Abelardo', equipe: 669, matricula: '100785' },
+    { nome: 'Ronaldo', equipe: 669, matricula: '105585' },
+    { nome: 'Bruno', equipe: 669, matricula: '106629' },
+    { nome: 'Goldo', equipe: 669, matricula: '55480' },
+  ];
 
-                video.addEventListener('click', function() {
-                    if (video.paused) {
-                        video.play();
-                        playButton.classList.remove('visible');
-                        playButton.classList.add('hidden');
-                    } else {
-                        video.pause();
-                        playButton.classList.remove('hidden');
-                        playButton.classList.add('visible');
-                    }
-                });
+  const ordensServico = [
+    { local: 'Santa Helena', codigo: '616896', lotes: ['883'] },
+    { local: 'Pagitinga', codigo: '616898', lotes: ['47','110','74','55'] },
+    { local: 'R2', codigo: '616893', lotes: ['802','810','8144','816','817'] },
+    { local: "Eng D'agua", codigo: '616842', lotes: ['695','694','716'] },
+    { local: 'Poço 3', codigo: '616826', lotes: ['1024','978'] },
+    { local: 'Poço 1', codigo: '616819', lotes: ['563'] },
+    { local: 'Paredão da Barragem', codigo: '616814', lotes: ['233'] },
+    { local: 'Burro Velho', codigo: '616813', lotes: ['1290'] },
+  ];
 
-                video.addEventListener('pause', function() {
-                    playButton.classList.remove('hidden');
-                    playButton.classList.add('visible');
-                });
+  // ====== LÓGICA ESCALA 4x2 ======
+  const CICLO = ['DIA', 'DIA', 'NOITE', 'NOITE', 'FOLGA', 'FOLGA'];
+  const POSICAO_INICIAL = { 669: 0, 667: 2, 668: 4 };
 
-                video.addEventListener('play', function() {
-                    playButton.classList.remove('visible');
-                    playButton.classList.add('hidden');
-                });
+  function getPosicaoCiclo(equipe, date) {
+    const baseDate = new Date(2026, 6, 27);
+    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+    const posInicial = POSICAO_INICIAL[equipe] || 0;
+    let pos = (posInicial + diffDays) % 6;
+    if (pos < 0) pos += 6;
+    return pos;
+  }
 
-                video.addEventListener('error', function() {
-                    document.querySelector('.fallback-msg').style.display = 'flex';
-                    playButton.style.display = 'none';
-                });
+  function getTurnoDia(equipe, date) {
+    const pos = getPosicaoCiclo(equipe, date);
+    const status = CICLO[pos];
+    if (status === 'DIA') return 0;
+    if (status === 'NOITE') return 1;
+    return 2;
+  }
 
-                playButton.classList.add('hidden');
-                playButton.classList.remove('visible');
-            }
+  function getStatusInfo(status) {
+    const map = {
+      0: { label: 'Dia', icon: ICON_SUN },
+      1: { label: 'Noite', icon: ICON_MOON },
+      2: { label: 'Folga', icon: ICON_PAUSE }
+    };
+    return map[status] || map[0];
+  }
 
-            // ===== CRONÔMETRO REGRESSIVO =====
-            const baseSeconds = Math.floor(Math.random() * (10800 - 3600 + 1)) + 3600;
-            let totalSeconds = baseSeconds;
-            const hoursEl = document.getElementById('hours');
-            const minutesEl = document.getElementById('minutes');
-            const secondsEl = document.getElementById('seconds');
+  function getIconStatus(status) {
+    const map = { 0: ICON_SUN, 1: ICON_MOON, 2: ICON_PAUSE };
+    return map[status] || ICON_SUN;
+  }
 
-            function updateTimer() {
-                if (totalSeconds <= 0) {
-                    totalSeconds = Math.floor(Math.random() * (10800 - 3600 + 1)) + 3600;
-                }
+  // ====== CONTROLE DE DATA ======
+  let currentDate = new Date(2026, 6, 27);
+  let cardAtual = 0;
+  const totalCards = 3;
 
-                const hrs = Math.floor(totalSeconds / 3600);
-                const mins = Math.floor((totalSeconds % 3600) / 60);
-                const secs = totalSeconds % 60;
+  // ====== CALENDÁRIO ======
+  let mesCalendario = new Date(2026, 6, 1);
+  let equipeCalendario = 667;
+  let letraCalendario = 'A';
 
-                hoursEl.textContent = String(hrs).padStart(2, '0');
-                minutesEl.textContent = String(mins).padStart(2, '0');
-                secondsEl.textContent = String(secs).padStart(2, '0');
+  // ====== TEMA ======
+  let temaEscuro = false;
 
-                totalSeconds--;
-            }
+  function toggleTheme() {
+    temaEscuro = !temaEscuro;
+    document.documentElement.setAttribute('data-theme', temaEscuro ? 'dark' : '');
+    const icon = document.getElementById('themeIcon');
+    if (temaEscuro) {
+      icon.innerHTML = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>';
+    } else {
+      icon.innerHTML = '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/>';
+    }
+    localStorage.setItem('temaEscuro', temaEscuro ? 'true' : 'false');
+  }
 
-            updateTimer();
-            setInterval(updateTimer, 1000);
+  // ====== NOTAS E ALARME ======
+  let notaData = {
+    texto: '',
+    alarmeAtivo: false,
+    intervaloHoras: 3,
+    ultimoToque: null
+  };
 
-            // ===== LINK DA SHOPEE =====
-            const shopeeLink = document.getElementById('shopeeLink');
-            if (shopeeLink) {
-                console.log('🔗 Link da Shopee: ' + shopeeLink.href);
-            }
+  let alarmTimeoutId = null;
+  let soundCtx = null;
 
-            console.log('📱 Cantos arredondados em todos os lados e informações subiram 10px');
-        })();
-    </script>
+  function playAlarmSound() {
+    try {
+      if (!soundCtx) {
+        soundCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const now = soundCtx.currentTime;
+      const frequencies = [523, 659, 784, 1047];
+      frequencies.forEach((freq, i) => {
+        const osc = soundCtx.createOscillator();
+        const gain = soundCtx.createGain();
+        osc.connect(gain);
+        gain.connect(soundCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, now + i * 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.2);
+        osc.start(now + i * 0.15);
+        osc.stop(now + i * 0.15 + 0.2);
+      });
+    } catch (e) {
+      console.log('Erro ao tocar som:', e);
+    }
+  }
+
+  function notificarAlarme() {
+    playAlarmSound();
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('⏰ Alarme da Nota', {
+        body: notaData.texto || 'Hora de verificar sua nota!',
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234A4F57"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>'
+      });
+    } else if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    notaData.ultimoToque = Date.now();
+    salvarDados();
+    atualizarDisplayNota();
+  }
+
+  function iniciarAlarme() {
+    pararAlarme();
+    if (!notaData.alarmeAtivo) return;
+
+    const intervaloMs = notaData.intervaloHoras * 60 * 60 * 1000;
+    let proximoToque;
+    
+    if (notaData.ultimoToque) {
+      proximoToque = notaData.ultimoToque + intervaloMs;
+      const agora = Date.now();
+      if (proximoToque <= agora) {
+        notificarAlarme();
+        proximoToque = Date.now() + intervaloMs;
+      }
+    } else {
+      proximoToque = Date.now() + intervaloMs;
+    }
+
+    const delay = proximoToque - Date.now();
+    if (delay > 0) {
+      alarmTimeoutId = setTimeout(() => {
+        notificarAlarme();
+        iniciarAlarme();
+      }, delay);
+    } else {
+      notificarAlarme();
+      iniciarAlarme();
+    }
+
+    atualizarDisplayNota();
+  }
+
+  function pararAlarme() {
+    if (alarmTimeoutId) {
+      clearTimeout(alarmTimeoutId);
+      alarmTimeoutId = null;
+    }
+  }
+
+  function toggleAlarme() {
+    notaData.alarmeAtivo = !notaData.alarmeAtivo;
+    if (notaData.alarmeAtivo) {
+      notaData.ultimoToque = null;
+      iniciarAlarme();
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    } else {
+      pararAlarme();
+    }
+    salvarDados();
+    atualizarDisplayNota();
+    atualizarBotaoAlarme();
+  }
+
+  function atualizarBotaoAlarme() {
+    const btn = document.getElementById('alarmToggleBtn');
+    if (notaData.alarmeAtivo) {
+      btn.classList.add('active-alarm');
+    } else {
+      btn.classList.remove('active-alarm');
+    }
+  }
+
+  function abrirNoteModal() {
+    document.getElementById('noteModalText').value = notaData.texto;
+    document.getElementById('alarmCheckbox').checked = notaData.alarmeAtivo;
+    document.getElementById('alarmInterval').value = notaData.intervaloHoras;
+    document.getElementById('modalNote').classList.add('active');
+  }
+
+  function fecharNoteModal() {
+    document.getElementById('modalNote').classList.remove('active');
+  }
+
+  function salvarNota() {
+    const texto = document.getElementById('noteModalText').value;
+    const alarmeAtivo = document.getElementById('alarmCheckbox').checked;
+    const intervalo = parseInt(document.getElementById('alarmInterval').value) || 3;
+
+    const alarmeMudou = notaData.alarmeAtivo !== alarmeAtivo;
+    const intervaloMudou = notaData.intervaloHoras !== intervalo;
+
+    notaData.texto = texto;
+    notaData.alarmeAtivo = alarmeAtivo;
+    notaData.intervaloHoras = intervalo;
+
+    if (alarmeMudou || intervaloMudou) {
+      notaData.ultimoToque = null;
+      if (notaData.alarmeAtivo) {
+        pararAlarme();
+        iniciarAlarme();
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+      } else {
+        pararAlarme();
+      }
+    }
+
+    salvarDados();
+    atualizarDisplayNota();
+    atualizarBotaoAlarme();
+    fecharNoteModal();
+  }
+
+  function atualizarDisplayNota() {
+    const display = document.getElementById('noteDisplay');
+    display.value = notaData.texto || 'Nenhuma nota salva. Clique no lápis para editar.';
+
+    const status = document.getElementById('alarmStatus');
+    if (notaData.alarmeAtivo) {
+      status.className = 'alarm-status active';
+      status.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
+        Alarme: Ligado (${notaData.intervaloHoras}h)
+      `;
+    } else {
+      status.className = 'alarm-status';
+      status.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
+        Alarme: Desligado
+      `;
+    }
+
+    const countdown = document.getElementById('alarmCountdown');
+    if (notaData.alarmeAtivo && notaData.ultimoToque) {
+      const prox = notaData.ultimoToque + (notaData.intervaloHoras * 60 * 60 * 1000);
+      const diff = prox - Date.now();
+      if (diff > 0) {
+        const horas = Math.floor(diff / (60 * 60 * 1000));
+        const minutos = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+        countdown.textContent = `Próximo: ${horas}h ${minutos}min`;
+      } else {
+        countdown.textContent = 'Tocando agora...';
+      }
+    } else if (notaData.alarmeAtivo) {
+      countdown.textContent = 'Aguardando primeiro toque...';
+    } else {
+      countdown.textContent = '';
+    }
+  }
+
+  // ====== SALVAR DADOS ======
+  function salvarDados() {
+    try {
+      const dados = {
+        nota: {
+          texto: notaData.texto,
+          alarmeAtivo: notaData.alarmeAtivo,
+          intervaloHoras: notaData.intervaloHoras,
+          ultimoToque: notaData.ultimoToque
+        },
+        data: currentDate.toISOString(),
+        cardAtual: cardAtual
+      };
+      localStorage.setItem('escala4x2_dados', JSON.stringify(dados));
+      console.log('✅ Dados salvos com sucesso!');
+    } catch (e) {
+      console.log('❌ Erro ao salvar dados:', e);
+    }
+  }
+
+  function carregarDados() {
+    try {
+      const dados = localStorage.getItem('escala4x2_dados');
+      if (dados) {
+        const parsed = JSON.parse(dados);
+        console.log('📂 Dados carregados:', parsed);
+        
+        if (parsed.nota) {
+          notaData.texto = parsed.nota.texto || '';
+          notaData.alarmeAtivo = parsed.nota.alarmeAtivo || false;
+          notaData.intervaloHoras = parsed.nota.intervaloHoras || 3;
+          notaData.ultimoToque = parsed.nota.ultimoToque || null;
+          
+          console.log('📝 Nota carregada:', notaData.texto);
+          
+          if (notaData.alarmeAtivo) {
+            setTimeout(() => {
+              iniciarAlarme();
+              if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+              }
+            }, 1000);
+          }
+        }
+        
+        if (parsed.data) {
+          const dataSalva = new Date(parsed.data);
+          if (!isNaN(dataSalva)) {
+            currentDate = dataSalva;
+            console.log('📅 Data carregada:', currentDate.toLocaleDateString());
+          }
+        }
+        
+        if (parsed.cardAtual !== undefined && parsed.cardAtual >= 0 && parsed.cardAtual < totalCards) {
+          cardAtual = parsed.cardAtual;
+        }
+        return true;
+      }
+    } catch (e) {
+      console.log('❌ Erro ao carregar dados:', e);
+    }
+    return false;
+  }
+
+  // ====== NAVEGAÇÃO CARDS ======
+  function mudarCard(direcao) {
+    const novoCard = cardAtual + direcao;
+    if (novoCard < 0 || novoCard >= totalCards) return;
+    cardAtual = novoCard;
+    document.getElementById('cardsSlider').style.transform = `translateX(-${cardAtual * 100}%)`;
+    atualizarIndicador();
+    atualizarBotoes();
+    atualizarInfo();
+    salvarDados();
+  }
+
+  function atualizarIndicador() {
+    document.querySelectorAll('.indicador span').forEach((dot, index) => {
+      dot.classList.toggle('active', index === cardAtual);
+    });
+  }
+
+  function atualizarBotoes() {
+    document.getElementById('btnPrev').disabled = cardAtual === 0;
+    document.getElementById('btnNext').disabled = cardAtual === totalCards - 1;
+  }
+
+  function atualizarInfo() {
+    const nomes = ['Turno A · Equipe 667', 'Turno B · Equipe 668', 'Turno C · Equipe 669'];
+    document.getElementById('infoTurno').textContent = nomes[cardAtual];
+  }
+
+  // ====== CONTROLE DE DIAS ======
+  function avancarDia() {
+    currentDate = new Date(currentDate);
+    currentDate.setDate(currentDate.getDate() + 1);
+    render();
+    salvarDados();
+  }
+
+  function irHoje() {
+    currentDate = new Date(2026, 6, 27);
+    render();
+    salvarDados();
+  }
+
+  // ====== CALENDÁRIO ======
+  function abrirCalendario(equipe, letra) {
+    equipeCalendario = equipe;
+    letraCalendario = letra;
+    document.getElementById('modalTitulo').textContent = `Turno ${letra} (${equipe})`;
+    document.getElementById('modalCalendario').classList.add('active');
+    document.getElementById('legendaDia').innerHTML = ICON_SUN + ' Dia';
+    document.getElementById('legendaNoite').innerHTML = ICON_MOON + ' Noite';
+    document.getElementById('legendaFolga').innerHTML = ICON_PAUSE + ' Folga';
+    renderCalendario();
+  }
+
+  function fecharCalendario() {
+    document.getElementById('modalCalendario').classList.remove('active');
+  }
+
+  function mudarMesCalendario(delta) {
+    mesCalendario = new Date(mesCalendario.getFullYear(), mesCalendario.getMonth() + delta, 1);
+    renderCalendario();
+  }
+
+  function renderCalendario() {
+    const grid = document.getElementById('calendarioGrid');
+    const ano = mesCalendario.getFullYear();
+    const mes = mesCalendario.getMonth();
+
+    document.getElementById('mesLabel').textContent = new Date(ano, mes).toLocaleDateString('pt-BR', {
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const semana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const primeiroDia = new Date(ano, mes, 1);
+    const ultimoDia = new Date(ano, mes + 1, 0);
+    const hoje = currentDate;
+
+    let html = semana.map(d => `<div class="cal-header">${d}</div>`).join('');
+
+    const offset = primeiroDia.getDay();
+    for (let i = 0; i < offset; i++) {
+      html += `<div class="cal-dia" style="opacity:0.3;"></div>`;
+    }
+
+    for (let d = 1; d <= ultimoDia.getDate(); d++) {
+      const data = new Date(ano, mes, d);
+      const isHoje = data.toDateString() === hoje.toDateString();
+
+      const status = getTurnoDia(equipeCalendario, data);
+      const icon = getIconStatus(status);
+      
+      let classe = 'cal-dia';
+      if (isHoje) classe += ' hoje';
+      
+      if (status === 0) classe += ' status-dia';
+      else if (status === 1) classe += ' status-noite';
+      else if (status === 2) classe += ' status-folga';
+
+      html += `
+        <div class="${classe}">
+          <div class="numero">${d}</div>
+          ${icon}
+        </div>
+      `;
+    }
+
+    grid.innerHTML = html;
+  }
+
+  // ====== O.S ======
+  function renderOS() {
+    const lista = document.getElementById('listaOS');
+    lista.innerHTML = ordensServico.map(os => `
+      <div class="item-os">
+        <div class="os-icon">${ICON_HOME}</div>
+        <div>
+          <div class="local">${os.local}</div>
+          <div class="os-codigo">O.S ${os.codigo}</div>
+          <div class="lotes">${os.lotes.map(l => `<span>${l}</span>`).join('')}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function abrirOS() {
+    renderOS();
+    document.getElementById('modalOS').classList.add('active');
+  }
+
+  function fecharOS() {
+    document.getElementById('modalOS').classList.remove('active');
+  }
+
+  // Fechar modais com ESC
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      fecharCalendario();
+      fecharOS();
+      fecharNoteModal();
+    }
+  });
+
+  // Fechar modais clicando fora
+  document.getElementById('modalCalendario').addEventListener('click', function (e) {
+    if (e.target === this) fecharCalendario();
+  });
+
+  document.getElementById('modalOS').addEventListener('click', function (e) {
+    if (e.target === this) fecharOS();
+  });
+
+  document.getElementById('modalNote').addEventListener('click', function (e) {
+    if (e.target === this) fecharNoteModal();
+  });
+
+  // ====== RENDERIZAR ======
+  function render() {
+    const date = currentDate;
+
+    document.getElementById('dataAtual').textContent = date.toLocaleDateString('pt-BR', {
+      day: '2-digit', month: 'short'
+    });
+
+    const turnos = [
+      { letra: 'A', statusId: 'statusA', listaId: 'listaA', cycleId: 'cycleA', labelsId: 'cycleLabelsA', equipe: 667 },
+      { letra: 'B', statusId: 'statusB', listaId: 'listaB', cycleId: 'cycleB', labelsId: 'cycleLabelsB', equipe: 668 },
+      { letra: 'C', statusId: 'statusC', listaId: 'listaC', cycleId: 'cycleC', labelsId: 'cycleLabelsC', equipe: 669 }
+    ];
+
+    const cicloLetras = ['D','D','N','N','F','F'];
+
+    turnos.forEach(({ statusId, listaId, cycleId, labelsId, equipe }) => {
+      const status = getTurnoDia(equipe, date);
+      const info = getStatusInfo(status);
+
+      const chip = document.getElementById(statusId);
+      if (chip) chip.innerHTML = info.icon + `<span>${info.label}</span>`;
+
+      const posAtual = getPosicaoCiclo(equipe, date);
+      const cycleEl = document.getElementById(cycleId);
+      const labelsEl = document.getElementById(labelsId);
+      if (cycleEl) {
+        cycleEl.innerHTML = CICLO.map((_, i) =>
+          `<div class="seg ${i === posAtual ? 'active' : ''}"></div>`
+        ).join('');
+      }
+      if (labelsEl) {
+        labelsEl.innerHTML = cicloLetras.map((l, i) =>
+          `<span class="${i === posAtual ? 'active-label' : ''}">${l}</span>`
+        ).join('');
+      }
+
+      const trabalhadores = workers.filter(w => w.equipe === equipe);
+      const lista = document.getElementById(listaId);
+
+      if (lista) {
+        if (trabalhadores.length === 0) {
+          lista.innerHTML = '<div class="trabalhador-item" style="color:var(--text-faint);justify-content:center;">Nenhum trabalhador</div>';
+        } else {
+          const isTrabalho = status === 0 || status === 1;
+          lista.innerHTML = trabalhadores.map(w => `
+            <div class="trabalhador-item">
+              <span class="who">${ICON_USER}${w.nome}</span>
+              <span class="matricula">${w.matricula}</span>
+              <span class="status-dot ${isTrabalho ? 'presente' : 'folga'}"></span>
+            </div>
+          `).join('');
+        }
+      }
+    });
+
+    if (document.getElementById('modalCalendario').classList.contains('active')) {
+      renderCalendario();
+    }
+
+    atualizarDisplayNota();
+    atualizarBotaoAlarme();
+    
+    document.getElementById('cardsSlider').style.transform = `translateX(-${cardAtual * 100}%)`;
+    atualizarIndicador();
+    atualizarBotoes();
+    atualizarInfo();
+  }
+
+  // ====== EVENTOS ======
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') mudarCard(-1);
+    if (e.key === 'ArrowRight') mudarCard(1);
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') avancarDia();
+  });
+
+  // ====== INICIALIZAR ======
+  function init() {
+    console.log('🚀 Inicializando aplicação...');
+    
+    // Carregar tema
+    const temaSalvo = localStorage.getItem('temaEscuro');
+    if (temaSalvo === 'true') {
+      temaEscuro = true;
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.getElementById('themeIcon').innerHTML = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>';
+    }
+
+    // Carregar dados salvos
+    const dadosCarregados = carregarDados();
+    console.log('📊 Dados carregados?', dadosCarregados);
+    
+    // Renderizar
+    render();
+    
+    // Se não tinha dados salvos, salva o estado inicial
+    if (!dadosCarregados) {
+      console.log('💾 Salvando estado inicial...');
+      salvarDados();
+    }
+
+    // Salvar dados periodicamente
+    setInterval(() => {
+      salvarDados();
+      atualizarDisplayNota();
+    }, 30000);
+
+    // Verificar alarme a cada minuto
+    setInterval(() => {
+      if (notaData.alarmeAtivo && notaData.ultimoToque) {
+        const prox = notaData.ultimoToque + (notaData.intervaloHoras * 60 * 60 * 1000);
+        if (Date.now() >= prox) {
+          notificarAlarme();
+          notaData.ultimoToque = Date.now();
+          salvarDados();
+          iniciarAlarme();
+        }
+      }
+      atualizarDisplayNota();
+    }, 60000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
 </body>
 </html>
