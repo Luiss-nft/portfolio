@@ -1,1733 +1,1454 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escala 4x2</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#F4F5F6;
-    --surface:#FFFFFF;
-    --border:#E3E6E9;
-    --text:#15181C;
-    --text-muted:#767D87;
-    --text-faint:#A6ACB3;
-    --a:#2563EB;
-    --a-soft:#DBEAFE;
-    --b:#7C3AED;
-    --b-soft:#EDE9FE;
-    --c:#DC2626;
-    --c-soft:#FEE2E2;
-    --radius-lg:20px;
-    --radius-md:14px;
-    --radius-sm:10px;
-    --shadow: 0 1px 2px rgba(20,23,27,0.04), 0 8px 24px rgba(20,23,27,0.06);
-    --note-bg:#FFF9E6;
-    --note-border:#E8D8B0;
-    --cor-dia:#F59E0B;
-    --cor-noite:#3B82F6;
-    --cor-folga:#EF4444;
-  }
-
-  [data-theme="dark"]{
-    --bg:#1A1D23;
-    --surface:#24282F;
-    --border:#333840;
-    --text:#E8ECF0;
-    --text-muted:#9AA3AE;
-    --text-faint:#6B7480;
-    --a:#60A5FA;
-    --a-soft:#1E293B;
-    --b:#A78BFA;
-    --b-soft:#2D1B4E;
-    --c:#F87171;
-    --c-soft:#3B1A1A;
-    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
-    --note-bg:#2D2A1E;
-    --note-border:#4A4530;
-    --cor-dia:#FBBF24;
-    --cor-noite:#60A5FA;
-    --cor-folga:#F87171;
-  }
-
-  *{margin:0;padding:0;box-sizing:border-box;}
-
-  html,body{height:100%;}
-
-  body{
-    font-family:'IBM Plex Sans', sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:32px 16px 40px;
-    -webkit-font-smoothing:antialiased;
-    transition:background .3s, color .3s;
-  }
-
-  button{font-family:inherit;cursor:pointer;}
-
-  svg.icon{
-    width:18px;height:18px;
-    stroke:currentColor;
-    stroke-width:1.75;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-    fill:none;
-    display:block;
-    flex-shrink:0;
-  }
-
-  .app{
-    width:100%;
-    max-width:420px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
-
-  .app-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 4px;
-    flex-wrap:wrap;
-    gap:8px;
-  }
-
-  .app-header .eyebrow{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:0.72rem;
-    font-weight:600;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    color:var(--text-faint);
-  }
-
-  .app-header .today-date{
-    font-size:0.78rem;
-    color:var(--text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .header-actions{
-    display:flex;
-    gap:6px;
-    align-items:center;
-  }
-
-  .header-actions button{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:50%;
-    width:34px;
-    height:34px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--text-muted);
-    cursor:pointer;
-    transition:.2s;
-    box-shadow:var(--shadow);
-  }
-
-  .header-actions button:hover{
-    border-color:var(--text);
-    color:var(--text);
-  }
-
-  /* ===== CARD SLIDER ===== */
-  .card-wrapper{width:100%;overflow:hidden;border-radius:var(--radius-lg);}
-
-  .cards-slider{
-    display:flex;
-    transition:transform .45s cubic-bezier(.65,0,.35,1);
-    width:100%;
-  }
-
-  .turno-card{
-    min-width:100%;
-    flex-shrink:0;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow);
-    padding:22px 22px 18px;
-    position:relative;
-    overflow:hidden;
-    transition:background .3s, border .3s;
-  }
-
-  .turno-a{--accent:var(--a);--accent-soft:var(--a-soft);}
-  .turno-b{--accent:var(--b);--accent-soft:var(--b-soft);}
-  .turno-c{--accent:var(--c);--accent-soft:var(--c-soft);}
-
-  .card-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:18px;
-  }
-
-  .icon-btn{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    background:var(--bg);
-    border:1px solid var(--border);
-    color:var(--text-muted);
-    font-size:0.72rem;
-    font-weight:600;
-    letter-spacing:0.02em;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    transition:.2s;
-  }
-
-  .icon-btn:hover{
-    background:var(--accent-soft);
-    border-color:var(--accent);
-    color:var(--accent);
-  }
-
-  .icon-btn.icon-only{padding:8px;}
-
-  .card-identity{
-    display:flex;
-    align-items:flex-end;
-    gap:14px;
-    margin-bottom:14px;
-  }
-
-  .letra{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:clamp(2.6rem, 12vw, 3.2rem);
-    font-weight:700;
-    line-height:0.9;
-    color:var(--accent);
-  }
-
-  .identity-meta{padding-bottom:4px;}
-
-  .equipe{
-    font-size:0.95rem;
-    font-weight:600;
-    color:var(--text);
-  }
-
-  .equipe-label{
-    font-size:0.72rem;
-    color:var(--text-faint);
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-  }
-
-  .status-chip{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:7px 14px;
-    border-radius:999px;
-    background:var(--accent-soft);
-    color:var(--accent);
-    font-size:0.86rem;
-    font-weight:600;
-    margin-bottom:16px;
-  }
-
-  .status-chip svg{width:16px;height:16px;}
-
-  /* cycle tracker */
-  .cycle{
-    display:flex;
-    gap:5px;
-    margin-bottom:16px;
-  }
-
-  .cycle .seg{
-    flex:1;
-    height:5px;
-    border-radius:3px;
-    background:var(--border);
-  }
-
-  .cycle .seg.active{background:var(--accent);}
-
-  .cycle-labels{
-    display:flex;
-    gap:5px;
-    margin-top:5px;
-    margin-bottom:2px;
-  }
-
-  .cycle-labels span{
-    flex:1;
-    text-align:center;
-    font-size:0.6rem;
-    font-weight:600;
-    color:var(--text-faint);
-    letter-spacing:0.03em;
-  }
-
-  .cycle-labels span.active-label{color:var(--accent);}
-
-  .trabalhadores{
-    margin-top:14px;
-    padding-top:14px;
-    border-top:1px solid var(--border);
-    max-height:240px;
-    overflow-y:auto;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-
-  .trabalhadores::-webkit-scrollbar{width:4px;}
-  .trabalhadores::-webkit-scrollbar-track{background:transparent;}
-  .trabalhadores::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-
-  .trabalhador-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:9px 12px;
-    border-radius:var(--radius-sm);
-    background:var(--bg);
-    font-size:0.88rem;
-    transition:background .2s;
-  }
-
-  .trabalhador-item:hover{
-    background:var(--border);
-  }
-
-  .trabalhador-item .who{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    color:var(--text);
-  }
-
-  .trabalhador-item .who svg{
-    color:var(--text-faint);
-  }
-
-  .trabalhador-item .matricula{
-    color:var(--text-faint);
-    font-size:0.78rem;
-    font-variant-numeric:tabular-nums;
-  }
-
-  .trabalhador-item .status-dot{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    display:inline-block;
-    flex-shrink:0;
-  }
-
-  .trabalhador-item .status-dot.presente{
-    background:#22C55E;
-  }
-
-  .trabalhador-item .status-dot.folga{
-    background:#F59E0B;
-  }
-
-  .contador-trabalhadores{
-    font-size:0.72rem;
-    color:var(--text-faint);
-    text-align:right;
-    padding:4px 6px 0 0;
-  }
-
-  /* ===== NAV ===== */
-  .navegacao{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:18px;
-  }
-
-  .nav-btn{
-    width:42px;height:42px;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:50%;
-    border:1px solid var(--border);
-    background:var(--surface);
-    color:var(--text);
-    cursor:pointer;
-    transition:.2s;
-    box-shadow:var(--shadow);
-  }
-
-  .nav-btn:hover{border-color:var(--text);}
-
-  .nav-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none;}
-  .nav-btn:disabled:hover{border-color:var(--border);}
-
-  .indicador{display:flex;gap:7px;align-items:center;}
-
-  .indicador span{
-    width:7px;height:7px;
-    border-radius:50%;
-    background:var(--border);
-    transition:.25s;
-  }
-
-  .indicador span.active{
-    background:var(--text);
-    width:20px;
-    border-radius:4px;
-  }
-
-  /* ===== DAY CONTROLS ===== */
-  .controles-dia{display:flex;gap:10px;width:100%;}
-
-  .controles-dia button{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    padding:12px 14px;
-    border-radius:999px;
-    border:1px solid var(--border);
-    background:var(--surface);
-    color:var(--text);
-    font-size:0.86rem;
-    font-weight:600;
-    cursor:pointer;
-    transition:.2s;
-    box-shadow:var(--shadow);
-  }
-
-  .controles-dia .btn-hoje{color:var(--a);}
-  .controles-dia .btn-hoje:hover{background:var(--a-soft);border-color:var(--a);}
-
-  .controles-dia .btn-avancar{background:var(--text);color:#fff;border-color:var(--text);}
-  .controles-dia .btn-avancar:hover{opacity:.85;}
-
-  .info-turno{
-    text-align:center;
-    color:var(--text-faint);
-    font-size:0.78rem;
-    letter-spacing:0.02em;
-  }
-
-  /* ===== MODALS ===== */
-  .modal-overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(20,23,27,0.45);
-    z-index:1000;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-  }
-
-  .modal-overlay.active{display:flex;}
-
-  .modal{
-    background:var(--surface);
-    border-radius:var(--radius-lg);
-    padding:22px;
-    max-width:440px;
-    width:100%;
-    max-height:88vh;
-    overflow-y:auto;
-    box-shadow:0 24px 60px rgba(20,23,27,0.28);
-    transition:background .3s;
-  }
-
-  .modal::-webkit-scrollbar{width:4px;}
-  .modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-
-  .modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-    padding-bottom:14px;
-    border-bottom:1px solid var(--border);
-  }
-
-  .modal-header h2{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:1.02rem;
-    font-weight:600;
-    display:flex;
-    align-items:center;
-    gap:9px;
-  }
-
-  .modal-header h2 svg{color:var(--text-muted);}
-
-  .fechar{
-    width:32px;height:32px;
-    display:flex;align-items:center;justify-content:center;
-    border-radius:50%;
-    background:var(--bg);
-    border:none;
-    color:var(--text-muted);
-    cursor:pointer;
-    transition:.2s;
-  }
-
-  .fechar:hover{background:var(--border);color:var(--text);}
-
-  .calendario-nav{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:14px;
-  }
-
-  .calendario-nav button{
-    width:32px;height:32px;
-    display:flex;align-items:center;justify-content:center;
-    background:var(--bg);
-    border:1px solid var(--border);
-    border-radius:50%;
-    color:var(--text-muted);
-    cursor:pointer;
-    transition:.2s;
-  }
-
-  .calendario-nav button:hover{border-color:var(--text);color:var(--text);}
-
-  .mes-label{
-    font-size:0.92rem;
-    font-weight:600;
-    text-transform:capitalize;
-  }
-
-  .calendario-grid{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:4px;
-  }
-
-  .cal-header{
-    text-align:center;
-    color:var(--text-faint);
-    font-size:0.62rem;
-    font-weight:600;
-    padding:6px 2px;
-    text-transform:uppercase;
-    letter-spacing:0.04em;
-  }
-
-  .cal-dia{
-    background:var(--bg);
-    border-radius:10px;
-    padding:8px 2px;
-    text-align:center;
-    min-height:54px;
-    border:1.5px solid transparent;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-  }
-
-  .cal-dia .numero{
-    font-size:0.8rem;
-    color:var(--text-muted);
-    font-variant-numeric:tabular-nums;
-    font-weight:600;
-  }
-
-  .cal-dia svg{
-    width:15px;
-    height:15px;
-  }
-
-  /* Cores específicas para cada status no calendário - APENAS ÍCONES */
-  .cal-dia.status-dia svg{
-    stroke:var(--cor-dia);
-    fill:var(--cor-dia);
-  }
-
-  .cal-dia.status-noite svg{
-    stroke:var(--cor-noite);
-    fill:var(--cor-noite);
-  }
-
-  .cal-dia.status-folga svg{
-    stroke:var(--cor-folga);
-    fill:var(--cor-folga);
-  }
-
-  .cal-dia.hoje{
-    border-color:var(--text);
-    background:var(--surface);
-  }
-  .cal-dia.hoje .numero{
-    font-weight:700;
-  }
-
-  .cal-legenda{
-    display:flex;
-    gap:16px;
-    justify-content:center;
-    flex-wrap:wrap;
-    margin-top:16px;
-    padding-top:14px;
-    border-top:1px solid var(--border);
-  }
-
-  .cal-legenda span{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size:0.74rem;
-    color:var(--text-muted);
-  }
-
-  .cal-legenda svg{
-    width:14px;
-    height:14px;
-  }
-
-  .cal-legenda .legenda-dia svg{
-    stroke:var(--cor-dia);
-    fill:var(--cor-dia);
-  }
-
-  .cal-legenda .legenda-noite svg{
-    stroke:var(--cor-noite);
-    fill:var(--cor-noite);
-  }
-
-  .cal-legenda .legenda-folga svg{
-    stroke:var(--cor-folga);
-    fill:var(--cor-folga);
-  }
-
-  /* ===== O.S MODAL ===== */
-  .item-os{
-    display:flex;
-    gap:12px;
-    padding:13px 4px;
-    border-bottom:1px solid var(--border);
-  }
-
-  .item-os:last-child{border-bottom:none;}
-
-  .item-os .os-icon{
-    width:36px;height:36px;
-    border-radius:10px;
-    background:var(--bg);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--text-muted);
-    flex-shrink:0;
-  }
-
-  .item-os .local{font-weight:600;color:var(--text);font-size:0.94rem;}
-  .item-os .os-codigo{color:var(--a);font-size:0.78rem;font-weight:600;margin-top:2px;}
-  .item-os .lotes{color:var(--text-faint);font-size:0.76rem;margin-top:5px;display:flex;flex-wrap:wrap;gap:4px;}
-
-  .item-os .lotes span{
-    background:var(--bg);
-    padding:2px 8px;
-    border-radius:6px;
-    color:var(--text-muted);
-  }
-
-  /* ===== NOTE / ALARM ===== */
-  .note-container{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius-lg);
-    padding:16px;
-    box-shadow:var(--shadow);
-    transition:background .3s, border .3s;
-  }
-
-  .note-container .note-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
-  }
-
-  .note-container .note-header h3{
-    font-size:0.85rem;
-    font-weight:600;
-    color:var(--text-muted);
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-
-  .note-container .note-header .note-actions{
-    display:flex;
-    gap:6px;
-  }
-
-  .note-container .note-header .note-actions button{
-    background:var(--bg);
-    border:1px solid var(--border);
-    border-radius:50%;
-    width:30px;
-    height:30px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--text-muted);
-    cursor:pointer;
-    transition:.2s;
-  }
-
-  .note-container .note-header .note-actions button:hover{
-    border-color:var(--text);
-    color:var(--text);
-  }
-
-  .note-container .note-header .note-actions button.active-alarm{
-    background:var(--a-soft);
-    border-color:var(--a);
-    color:var(--a);
-  }
-
-  .note-textarea{
-    width:100%;
-    min-height:70px;
-    background:var(--note-bg);
-    border:1px solid var(--note-border);
-    border-radius:var(--radius-sm);
-    padding:10px 12px;
-    font-size:0.88rem;
-    font-family:inherit;
-    color:var(--text);
-    resize:vertical;
-    transition:background .3s, border .3s, color .3s;
-  }
-
-  .note-textarea:focus{
-    outline:none;
-    border-color:var(--a);
-  }
-
-  .note-alarm-info{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-top:8px;
-    font-size:0.72rem;
-    color:var(--text-faint);
-    flex-wrap:wrap;
-  }
-
-  .note-alarm-info .alarm-status{
-    display:flex;
-    align-items:center;
-    gap:4px;
-    font-weight:500;
-  }
-
-  .note-alarm-info .alarm-status.active{
-    color:var(--a);
-  }
-
-  .note-alarm-info .alarm-countdown{
-    color:var(--text-muted);
-  }
-
-  /* ===== MODAL NOTAS ===== */
-  .note-modal-text{
-    width:100%;
-    min-height:120px;
-    background:var(--note-bg);
-    border:1px solid var(--note-border);
-    border-radius:var(--radius-sm);
-    padding:12px;
-    font-size:0.92rem;
-    font-family:inherit;
-    color:var(--text);
-    resize:vertical;
-    transition:background .3s, border .3s, color .3s;
-  }
-
-  .note-modal-text:focus{
-    outline:none;
-    border-color:var(--a);
-  }
-
-  .note-modal-options{
-    margin-top:14px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    align-items:center;
-  }
-
-  .note-modal-options label{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size:0.82rem;
-    color:var(--text-muted);
-    cursor:pointer;
-  }
-
-  .note-modal-options input[type="checkbox"]{
-    width:16px;
-    height:16px;
-    accent-color:var(--a);
-    cursor:pointer;
-  }
-
-  .note-modal-options .alarm-interval{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin-left:auto;
-  }
-
-  .note-modal-options .alarm-interval select{
-    background:var(--bg);
-    border:1px solid var(--border);
-    border-radius:6px;
-    padding:4px 8px;
-    font-size:0.8rem;
-    color:var(--text);
-    font-family:inherit;
-  }
-
-  .note-modal-options .alarm-interval select:focus{
-    outline:none;
-    border-color:var(--a);
-  }
-
-  .note-modal-actions{
-    display:flex;
-    gap:10px;
-    margin-top:16px;
-  }
-
-  .note-modal-actions button{
-    flex:1;
-    padding:10px;
-    border-radius:999px;
-    border:1px solid var(--border);
-    background:var(--surface);
-    color:var(--text);
-    font-weight:600;
-    font-size:0.85rem;
-    cursor:pointer;
-    transition:.2s;
-  }
-
-  .note-modal-actions .btn-save{
-    background:var(--text);
-    color:#fff;
-    border-color:var(--text);
-  }
-
-  .note-modal-actions .btn-save:hover{opacity:.85;}
-
-  .loading-message{
-    text-align:center;
-    padding:20px;
-    color:var(--text-faint);
-    font-size:0.9rem;
-  }
-
-  @media (max-width:380px){
-    .turno-card{padding:18px 16px 16px;}
-    .nav-btn{width:38px;height:38px;}
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .cards-slider{transition:none;}
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Locais · 4x2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f1f4f8;
+            padding: 2rem 1rem;
+        }
+
+        .container-principal {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .btn-criar-local {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-criar-local:hover {
+            background: #334155;
+        }
+
+        .locais-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
+            gap: 2rem;
+        }
+
+        .card-local {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .card-header {
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .card-header:hover {
+            background: #f1f5f9;
+        }
+
+        .local-titulo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            user-select: none;
+            flex: 1;
+            min-width: 120px;
+            pointer-events: none;
+        }
+
+        .codigo-os {
+            background: #1e293b;
+            color: white;
+            padding: 0.25rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .data-atual-local {
+            background: #e2e8f0;
+            color: #334155;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .btn-excluir-local {
+            background: #dc2626;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 999;
+        }
+
+        .btn-excluir-local:hover {
+            background: #b91c1c;
+            transform: scale(1.05);
+        }
+
+        .tabela-local {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .linha-cabecalho-local {
+            display: grid;
+            grid-template-columns: 1.5fr 1.2fr 1fr 1fr 60px 60px;
+            background: #f1f5f9;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            border-bottom: 1px solid #d1d9e6;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 60px;
+            opacity: 1;
+        }
+
+        .linha-cabecalho-local.oculto {
+            max-height: 0;
+            padding: 0 1.5rem;
+            opacity: 0;
+            border-bottom: none;
+        }
+
+        .linha-dado-local {
+            display: grid;
+            grid-template-columns: 1.5fr 1.2fr 1fr 1fr 60px 60px;
+            padding: 0.7rem 1.5rem;
+            align-items: center;
+            border-bottom: 1px solid #edf2f7;
+            background: white;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 80px;
+            opacity: 1;
+            gap: 0.3rem;
+            position: relative;
+        }
+
+        .linha-dado-local.oculto {
+            max-height: 0;
+            padding: 0 1.5rem;
+            opacity: 0;
+            border-bottom: none;
+        }
+
+        .linha-dado-local:last-child {
+            border-bottom: none;
+        }
+
+        .linha-dado-local.oculto:last-child {
+            border-bottom: none;
+        }
+
+        .nome-pessoa {
+            font-weight: 500;
+            color: #0f172a;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .matricula-pessoa {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #334155;
+            background: #f1f5f9;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            display: inline-block;
+            width: fit-content;
+            pointer-events: none;
+        }
+
+        .turno-display {
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+            width: fit-content;
+            letter-spacing: 0.3px;
+            pointer-events: none;
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .turno-display.turno-A {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .turno-display.turno-B {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .turno-display.turno-C {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .horario-display {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 0.15rem 0.8rem;
+            border-radius: 16px;
+            display: inline-block;
+            width: fit-content;
+            min-width: 2rem;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .btn-aviso {
+            background: #e5e7eb;
+            color: #6b7280;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            position: relative;
+            z-index: 999;
+        }
+
+        .btn-aviso:hover {
+            background: #d1d5db;
+            transform: scale(1.1);
+        }
+
+        .btn-aviso.ativo {
+            background: #fbbf24;
+            color: #78350f;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .btn-aviso.ativo:hover {
+            background: #f59e0b;
+        }
+
+        .btn-aviso.pulsando {
+            animation: pulsarAviso 0.6s ease;
+        }
+
+        @keyframes pulsarAviso {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.25); }
+            60% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        /* Bolha de pensamento - Tooltip */
+        .tooltip-aviso {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 8px 12px;
+            min-width: 180px;
+            max-width: 280px;
+            font-size: 0.75rem;
+            color: #78350f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            transition: all 0.2s ease;
+            white-space: normal;
+            word-wrap: break-word;
+            text-align: center;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+
+        /* Rabinho da bolha */
+        .tooltip-aviso::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #fef3c7;
+        }
+
+        .tooltip-aviso::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 7px solid transparent;
+            border-top-color: #f59e0b;
+            margin-top: -2px;
+        }
+
+        .btn-aviso.ativo:hover .tooltip-aviso,
+        .btn-aviso.ativo .tooltip-aviso.mostrar {
+            visibility: visible;
+            opacity: 1;
+            bottom: 120%;
+        }
+
+        .btn-aviso.ativo:hover .tooltip-aviso,
+        .tooltip-aviso.mostrar {
+            pointer-events: auto;
+        }
+
+        .tooltip-aviso-texto {
+            pointer-events: none;
+        }
+
+        .btn-excluir-aviso {
+            display: block;
+            margin: 8px auto 0;
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-excluir-aviso:hover {
+            background: #b91c1c;
+        }
+
+        /* Container para posicionar o tooltip */
+        .aviso-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-excluir-pessoa {
+            background: #dc2626;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 999;
+        }
+
+        .btn-excluir-pessoa:hover {
+            background: #b91c1c;
+            transform: scale(1.1);
+        }
+
+        .btn-adicionar-pessoa {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px dashed #cbd5e1;
+            padding: 0.6rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin: 0.5rem 1.5rem 1rem;
+            text-align: center;
+            opacity: 0.5;
+        }
+
+        .btn-adicionar-pessoa:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            opacity: 1;
+            color: #1e293b;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.ativo {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+
+        .modal label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            color: #334155;
+        }
+
+        .modal input,
+        .modal select {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 2px solid #d1d9e6;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .modal input:focus,
+        .modal select:focus {
+            outline: none;
+            border-color: #1e293b;
+        }
+
+        .modal select {
+            background: white;
+            cursor: pointer;
+        }
+
+        .modal-botoes {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .modal-botoes button {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-cancelar {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-cancelar:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-salvar {
+            background: #1e293b;
+            color: white;
+        }
+
+        .btn-salvar:hover {
+            background: #334155;
+        }
+
+        .btn-visualizar {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-visualizar:hover {
+            background: #d97706;
+        }
+
+        .modal-pequeno {
+            max-width: 400px;
+        }
+
+        .indicador-salvamento {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .indicador-salvamento.mostrar {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pop-up de aviso */
+        .popup-aviso-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .popup-aviso-overlay.ativo {
+            display: flex;
+        }
+
+        .popup-aviso {
+            background: white;
+            padding: 2rem 2.5rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: popupAnimacao 0.3s ease;
+        }
+
+        @keyframes popupAnimacao {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup-aviso .icone-aviso {
+            font-size: 3rem;
+            text-align: center;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-aviso h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .popup-aviso .conteudo-aviso {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.2rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            color: #78350f;
+            font-size: 1rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            min-height: 50px;
+        }
+
+        .popup-aviso .conteudo-aviso.vazio {
+            background: #f1f5f9;
+            border-left-color: #94a3b8;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .popup-aviso .detalhes-pessoa {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .popup-aviso .botoes-popup {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .popup-aviso .botoes-popup button {
+            flex: 1;
+            min-width: 80px;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .popup-aviso .btn-fechar-popup {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .popup-aviso .btn-fechar-popup:hover {
+            background: #cbd5e1;
+        }
+
+        .popup-aviso .btn-editar-popup {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .popup-aviso .btn-editar-popup:hover {
+            background: #d97706;
+        }
+
+        .popup-aviso .btn-excluir-aviso-popup {
+            background: #dc2626;
+            color: white;
+        }
+
+        .popup-aviso .btn-excluir-aviso-popup:hover {
+            background: #b91c1c;
+        }
+
+        @media (max-width: 768px) {
+            .locais-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .linha-cabecalho-local,
+            .linha-dado-local {
+                grid-template-columns: 1fr 1fr 60px 60px;
+                gap: 0.3rem;
+                padding: 0.8rem 1rem;
+                max-height: 200px;
+            }
+
+            .linha-cabecalho-local {
+                display: none;
+            }
+
+            .linha-dado-local {
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .linha-dado-local.oculto {
+                max-height: 0;
+                padding: 0 1rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .data-atual-local {
+                align-self: flex-start;
+            }
+
+            .tooltip-aviso {
+                min-width: 140px;
+                max-width: 200px;
+                font-size: 0.7rem;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .popup-aviso {
+                padding: 1.5rem;
+            }
+
+            .popup-aviso .botoes-popup button {
+                min-width: 70px;
+                font-size: 0.85rem;
+                padding: 0.6rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-
-  <div class="app-header">
-    <span class="eyebrow">Escala 4×2</span>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="today-date" id="dataAtual"></span>
-      <div class="header-actions">
-        <button onclick="toggleTheme()" title="Alternar tema">
-          <svg class="icon" viewBox="0 0 24 24" id="themeIcon"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+    <div class="container-principal">
+        <button class="btn-criar-local" onclick="abrirModalCriarLocal()">
+            + Criar Novo Local
         </button>
-        <button onclick="abrirNoteModal()" title="Bloco de notas / Alarme">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
-        </button>
-      </div>
+
+        <div class="locais-grid" id="locaisGrid"></div>
     </div>
-  </div>
 
-  <div class="card-wrapper">
-    <div class="cards-slider" id="cardsSlider">
-
-      <div class="turno-card turno-a">
-        <div class="card-top">
-          <button class="icon-btn" onclick="abrirOS()">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
-            O.S
-          </button>
-          <button class="icon-btn icon-only" onclick="abrirCalendario(667,'A')" title="Calendário do Turno A">
-            <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
-          </button>
-        </div>
-        <div class="card-identity">
-          <span class="letra">A</span>
-          <div class="identity-meta">
-            <div class="equipe-label">Equipe</div>
-            <div class="equipe">667</div>
-          </div>
-        </div>
-        <div class="status-chip" id="statusA"></div>
-        <div class="cycle" id="cycleA"></div>
-        <div class="cycle-labels" id="cycleLabelsA"></div>
-        <div class="trabalhadores" id="listaA"></div>
-      </div>
-
-      <div class="turno-card turno-b">
-        <div class="card-top">
-          <button class="icon-btn" onclick="abrirOS()">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
-            O.S
-          </button>
-          <button class="icon-btn icon-only" onclick="abrirCalendario(668,'B')" title="Calendário do Turno B">
-            <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
-          </button>
-        </div>
-        <div class="card-identity">
-          <span class="letra">B</span>
-          <div class="identity-meta">
-            <div class="equipe-label">Equipe</div>
-            <div class="equipe">668</div>
-          </div>
-        </div>
-        <div class="status-chip" id="statusB"></div>
-        <div class="cycle" id="cycleB"></div>
-        <div class="cycle-labels" id="cycleLabelsB"></div>
-        <div class="trabalhadores" id="listaB"></div>
-      </div>
-
-      <div class="turno-card turno-c">
-        <div class="card-top">
-          <button class="icon-btn" onclick="abrirOS()">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
-            O.S
-          </button>
-          <button class="icon-btn icon-only" onclick="abrirCalendario(669,'C')" title="Calendário do Turno C">
-            <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
-          </button>
-        </div>
-        <div class="card-identity">
-          <span class="letra">C</span>
-          <div class="identity-meta">
-            <div class="equipe-label">Equipe</div>
-            <div class="equipe">669</div>
-          </div>
-        </div>
-        <div class="status-chip" id="statusC"></div>
-        <div class="cycle" id="cycleC"></div>
-        <div class="cycle-labels" id="cycleLabelsC"></div>
-        <div class="trabalhadores" id="listaC"></div>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="navegacao">
-    <button class="nav-btn" id="btnPrev" onclick="mudarCard(-1)">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <div class="indicador">
-      <span class="active" data-index="0"></span>
-      <span data-index="1"></span>
-      <span data-index="2"></span>
-    </div>
-    <button class="nav-btn" id="btnNext" onclick="mudarCard(1)">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
-    </button>
-  </div>
-
-  <div class="controles-dia">
-    <button class="btn-hoje" onclick="irHoje()">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-      Hoje
-    </button>
-    <button class="btn-avancar" onclick="avancarDia()">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M5 5v14l10-7L5 5Z"/><path d="M18 5v14"/></svg>
-      Avançar dia
-    </button>
-  </div>
-
-  <!-- Bloco de notas / Alarme -->
-  <div class="note-container" id="noteContainer">
-    <div class="note-header">
-      <h3>
-        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
-        Notas & Alarme
-      </h3>
-      <div class="note-actions">
-        <button id="alarmToggleBtn" onclick="toggleAlarme()" title="Ativar/Desativar alarme">
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
-        </button>
-        <button onclick="abrirNoteModal()" title="Editar nota">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        </button>
-      </div>
-    </div>
-    <textarea class="note-textarea" id="noteDisplay" readonly placeholder="Clique no lápis para editar sua nota..."></textarea>
-    <div class="note-alarm-info">
-      <span class="alarm-status" id="alarmStatus">
-        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
-        Alarme: Desligado
-      </span>
-      <span class="alarm-countdown" id="alarmCountdown"></span>
-    </div>
-  </div>
-
-  <div class="info-turno" id="infoTurno">Turno A · Equipe 667</div>
-</div>
-
-<!-- MODAL CALENDÁRIO -->
-<div class="modal-overlay" id="modalCalendario">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>
-        <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
-        <span id="modalTitulo">Turno A (667)</span>
-      </h2>
-      <button class="fechar" onclick="fecharCalendario()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="calendario-nav">
-      <button onclick="mudarMesCalendario(-1)"><svg class="icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <span class="mes-label" id="mesLabel">Julho 2026</span>
-      <button onclick="mudarMesCalendario(1)"><svg class="icon" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-    <div class="calendario-grid" id="calendarioGrid"></div>
-    <div class="cal-legenda">
-      <span class="legenda-dia"><span id="legendaDia"></span></span>
-      <span class="legenda-noite"><span id="legendaNoite"></span></span>
-      <span class="legenda-folga"><span id="legendaFolga"></span></span>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL O.S -->
-<div class="modal-overlay" id="modalOS">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>
-        <svg class="icon" viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1Z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
-        Ordens de Serviço
-      </h2>
-      <button class="fechar" onclick="fecharOS()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div id="listaOS"></div>
-  </div>
-</div>
-
-<!-- MODAL NOTAS / ALARME -->
-<div class="modal-overlay" id="modalNote">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>
-        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
-        Nota & Alarme
-      </h2>
-      <button class="fechar" onclick="fecharNoteModal()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <textarea class="note-modal-text" id="noteModalText" placeholder="Digite sua nota aqui..."></textarea>
-    <div class="note-modal-options">
-      <label>
-        <input type="checkbox" id="alarmCheckbox">
-        Ativar alarme
-      </label>
-      <div class="alarm-interval">
-        <span>Intervalo:</span>
-        <select id="alarmInterval">
-          <option value="1">1 hora</option>
-          <option value="2">2 horas</option>
-          <option value="3" selected>3 horas</option>
-          <option value="4">4 horas</option>
-          <option value="6">6 horas</option>
-          <option value="8">8 horas</option>
-          <option value="12">12 horas</option>
-        </select>
-      </div>
-    </div>
-    <div class="note-modal-actions">
-      <button onclick="fecharNoteModal()">Cancelar</button>
-      <button class="btn-save" onclick="salvarNota()">Salvar</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // ====== ÍCONES ======
-  const ICON_SUN = '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>';
-  const ICON_MOON = '<svg class="icon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>';
-  const ICON_PAUSE = '<svg class="icon" viewBox="0 0 24 24"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg>';
-  const ICON_USER = '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>';
-  const ICON_HOME = '<svg class="icon" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9"/></svg>';
-
-  // ====== DADOS REAIS ======
-  const workers = [
-    { nome: 'Eronildo', equipe: 667, matricula: '103043' },
-    { nome: 'Jacquerson', equipe: 667, matricula: '100380' },
-    { nome: 'José Carlos', equipe: 667, matricula: '27250' },
-    { nome: 'Luciano', equipe: 667, matricula: '103806' },
-    { nome: 'Reginaldo', equipe: 667, matricula: '105580' },
-    { nome: 'Willian', equipe: 667, matricula: '105593' },
-
-    { nome: 'André', equipe: 668, matricula: '109028' },
-    { nome: 'Clemilson', equipe: 668, matricula: '69827' },
-    { nome: 'Daciel', equipe: 668, matricula: '86373' },
-    { nome: 'Elias', equipe: 668, matricula: '105515' },
-    { nome: 'Jaelson', equipe: 668, matricula: '105537' },
-    { nome: 'José Wanderley', equipe: 668, matricula: '108652' },
-    { nome: 'Pedro Paulo', equipe: 668, matricula: '57758' },
-
-    { nome: 'Igor', equipe: 669, matricula: '105533' },
-    { nome: 'Edjair', equipe: 669, matricula: '61276' },
-    { nome: 'José', equipe: 669, matricula: '32076' },
-    { nome: 'Gilson', equipe: 669, matricula: '55418' },
-    { nome: 'Abelardo', equipe: 669, matricula: '100785' },
-    { nome: 'Ronaldo', equipe: 669, matricula: '105585' },
-    { nome: 'Bruno', equipe: 669, matricula: '106629' },
-    { nome: 'Goldo', equipe: 669, matricula: '55480' },
-  ];
-
-  const ordensServico = [
-    { local: 'Santa Helena', codigo: '616896', lotes: ['883'] },
-    { local: 'Pagitinga', codigo: '616898', lotes: ['47','110','74','55'] },
-    { local: 'R2', codigo: '616893', lotes: ['802','810','8144','816','817'] },
-    { local: "Eng D'agua", codigo: '616842', lotes: ['695','694','716'] },
-    { local: 'Poço 3', codigo: '616826', lotes: ['1024','978'] },
-    { local: 'Poço 1', codigo: '616819', lotes: ['563'] },
-    { local: 'Paredão da Barragem', codigo: '616814', lotes: ['233'] },
-    { local: 'Burro Velho', codigo: '616813', lotes: ['1290'] },
-  ];
-
-  // ====== LÓGICA ESCALA 4x2 ======
-  const CICLO = ['DIA', 'DIA', 'NOITE', 'NOITE', 'FOLGA', 'FOLGA'];
-  const POSICAO_INICIAL = { 669: 0, 667: 2, 668: 4 };
-
-  function getPosicaoCiclo(equipe, date) {
-    const baseDate = new Date(2026, 6, 27);
-    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
-    const posInicial = POSICAO_INICIAL[equipe] || 0;
-    let pos = (posInicial + diffDays) % 6;
-    if (pos < 0) pos += 6;
-    return pos;
-  }
-
-  function getTurnoDia(equipe, date) {
-    const pos = getPosicaoCiclo(equipe, date);
-    const status = CICLO[pos];
-    if (status === 'DIA') return 0;
-    if (status === 'NOITE') return 1;
-    return 2;
-  }
-
-  function getStatusInfo(status) {
-    const map = {
-      0: { label: 'Dia', icon: ICON_SUN },
-      1: { label: 'Noite', icon: ICON_MOON },
-      2: { label: 'Folga', icon: ICON_PAUSE }
-    };
-    return map[status] || map[0];
-  }
-
-  function getIconStatus(status) {
-    const map = { 0: ICON_SUN, 1: ICON_MOON, 2: ICON_PAUSE };
-    return map[status] || ICON_SUN;
-  }
-
-  // ====== CONTROLE DE DATA ======
-  let currentDate = new Date(2026, 6, 27);
-  let cardAtual = 0;
-  const totalCards = 3;
-
-  // ====== CALENDÁRIO ======
-  let mesCalendario = new Date(2026, 6, 1);
-  let equipeCalendario = 667;
-  let letraCalendario = 'A';
-
-  // ====== TEMA ======
-  let temaEscuro = false;
-
-  function toggleTheme() {
-    temaEscuro = !temaEscuro;
-    document.documentElement.setAttribute('data-theme', temaEscuro ? 'dark' : '');
-    const icon = document.getElementById('themeIcon');
-    if (temaEscuro) {
-      icon.innerHTML = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>';
-    } else {
-      icon.innerHTML = '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/>';
-    }
-    localStorage.setItem('temaEscuro', temaEscuro ? 'true' : 'false');
-  }
-
-  // ====== NOTAS E ALARME ======
-  let notaData = {
-    texto: '',
-    alarmeAtivo: false,
-    intervaloHoras: 3,
-    ultimoToque: null
-  };
-
-  let alarmTimeoutId = null;
-  let soundCtx = null;
-
-  function playAlarmSound() {
-    try {
-      if (!soundCtx) {
-        soundCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      const now = soundCtx.currentTime;
-      const frequencies = [523, 659, 784, 1047];
-      frequencies.forEach((freq, i) => {
-        const osc = soundCtx.createOscillator();
-        const gain = soundCtx.createGain();
-        osc.connect(gain);
-        gain.connect(soundCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.15, now + i * 0.15);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.2);
-        osc.start(now + i * 0.15);
-        osc.stop(now + i * 0.15 + 0.2);
-      });
-    } catch (e) {
-      console.log('Erro ao tocar som:', e);
-    }
-  }
-
-  function notificarAlarme() {
-    playAlarmSound();
-
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('⏰ Alarme da Nota', {
-        body: notaData.texto || 'Hora de verificar sua nota!',
-        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234A4F57"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>'
-      });
-    } else if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
-
-    notaData.ultimoToque = Date.now();
-    salvarDados();
-    atualizarDisplayNota();
-  }
-
-  function iniciarAlarme() {
-    pararAlarme();
-    if (!notaData.alarmeAtivo) return;
-
-    const intervaloMs = notaData.intervaloHoras * 60 * 60 * 1000;
-    let proximoToque;
-    
-    if (notaData.ultimoToque) {
-      proximoToque = notaData.ultimoToque + intervaloMs;
-      const agora = Date.now();
-      if (proximoToque <= agora) {
-        notificarAlarme();
-        proximoToque = Date.now() + intervaloMs;
-      }
-    } else {
-      proximoToque = Date.now() + intervaloMs;
-    }
-
-    const delay = proximoToque - Date.now();
-    if (delay > 0) {
-      alarmTimeoutId = setTimeout(() => {
-        notificarAlarme();
-        iniciarAlarme();
-      }, delay);
-    } else {
-      notificarAlarme();
-      iniciarAlarme();
-    }
-
-    atualizarDisplayNota();
-  }
-
-  function pararAlarme() {
-    if (alarmTimeoutId) {
-      clearTimeout(alarmTimeoutId);
-      alarmTimeoutId = null;
-    }
-  }
-
-  function toggleAlarme() {
-    notaData.alarmeAtivo = !notaData.alarmeAtivo;
-    if (notaData.alarmeAtivo) {
-      notaData.ultimoToque = null;
-      iniciarAlarme();
-      if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
-    } else {
-      pararAlarme();
-    }
-    salvarDados();
-    atualizarDisplayNota();
-    atualizarBotaoAlarme();
-  }
-
-  function atualizarBotaoAlarme() {
-    const btn = document.getElementById('alarmToggleBtn');
-    if (notaData.alarmeAtivo) {
-      btn.classList.add('active-alarm');
-    } else {
-      btn.classList.remove('active-alarm');
-    }
-  }
-
-  function abrirNoteModal() {
-    document.getElementById('noteModalText').value = notaData.texto;
-    document.getElementById('alarmCheckbox').checked = notaData.alarmeAtivo;
-    document.getElementById('alarmInterval').value = notaData.intervaloHoras;
-    document.getElementById('modalNote').classList.add('active');
-  }
-
-  function fecharNoteModal() {
-    document.getElementById('modalNote').classList.remove('active');
-  }
-
-  function salvarNota() {
-    const texto = document.getElementById('noteModalText').value;
-    const alarmeAtivo = document.getElementById('alarmCheckbox').checked;
-    const intervalo = parseInt(document.getElementById('alarmInterval').value) || 3;
-
-    const alarmeMudou = notaData.alarmeAtivo !== alarmeAtivo;
-    const intervaloMudou = notaData.intervaloHoras !== intervalo;
-
-    notaData.texto = texto;
-    notaData.alarmeAtivo = alarmeAtivo;
-    notaData.intervaloHoras = intervalo;
-
-    if (alarmeMudou || intervaloMudou) {
-      notaData.ultimoToque = null;
-      if (notaData.alarmeAtivo) {
-        pararAlarme();
-        iniciarAlarme();
-        if ('Notification' in window && Notification.permission === 'default') {
-          Notification.requestPermission();
-        }
-      } else {
-        pararAlarme();
-      }
-    }
-
-    salvarDados();
-    atualizarDisplayNota();
-    atualizarBotaoAlarme();
-    fecharNoteModal();
-  }
-
-  function atualizarDisplayNota() {
-    const display = document.getElementById('noteDisplay');
-    display.value = notaData.texto || 'Nenhuma nota salva. Clique no lápis para editar.';
-
-    const status = document.getElementById('alarmStatus');
-    if (notaData.alarmeAtivo) {
-      status.className = 'alarm-status active';
-      status.innerHTML = `
-        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
-        Alarme: Ligado (${notaData.intervaloHoras}h)
-      `;
-    } else {
-      status.className = 'alarm-status';
-      status.innerHTML = `
-        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><circle cx="12" cy="13" r="7.5"/><path d="M12 8.5v5l3 2"/></svg>
-        Alarme: Desligado
-      `;
-    }
-
-    const countdown = document.getElementById('alarmCountdown');
-    if (notaData.alarmeAtivo && notaData.ultimoToque) {
-      const prox = notaData.ultimoToque + (notaData.intervaloHoras * 60 * 60 * 1000);
-      const diff = prox - Date.now();
-      if (diff > 0) {
-        const horas = Math.floor(diff / (60 * 60 * 1000));
-        const minutos = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
-        countdown.textContent = `Próximo: ${horas}h ${minutos}min`;
-      } else {
-        countdown.textContent = 'Tocando agora...';
-      }
-    } else if (notaData.alarmeAtivo) {
-      countdown.textContent = 'Aguardando primeiro toque...';
-    } else {
-      countdown.textContent = '';
-    }
-  }
-
-  // ====== SALVAR DADOS ======
-  function salvarDados() {
-    try {
-      const dados = {
-        nota: {
-          texto: notaData.texto,
-          alarmeAtivo: notaData.alarmeAtivo,
-          intervaloHoras: notaData.intervaloHoras,
-          ultimoToque: notaData.ultimoToque
-        },
-        data: currentDate.toISOString(),
-        cardAtual: cardAtual
-      };
-      localStorage.setItem('escala4x2_dados', JSON.stringify(dados));
-      console.log('✅ Dados salvos com sucesso!');
-    } catch (e) {
-      console.log('❌ Erro ao salvar dados:', e);
-    }
-  }
-
-  function carregarDados() {
-    try {
-      const dados = localStorage.getItem('escala4x2_dados');
-      if (dados) {
-        const parsed = JSON.parse(dados);
-        console.log('📂 Dados carregados:', parsed);
-        
-        if (parsed.nota) {
-          notaData.texto = parsed.nota.texto || '';
-          notaData.alarmeAtivo = parsed.nota.alarmeAtivo || false;
-          notaData.intervaloHoras = parsed.nota.intervaloHoras || 3;
-          notaData.ultimoToque = parsed.nota.ultimoToque || null;
-          
-          console.log('📝 Nota carregada:', notaData.texto);
-          
-          if (notaData.alarmeAtivo) {
-            setTimeout(() => {
-              iniciarAlarme();
-              if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-              }
-            }, 1000);
-          }
-        }
-        
-        if (parsed.data) {
-          const dataSalva = new Date(parsed.data);
-          if (!isNaN(dataSalva)) {
-            currentDate = dataSalva;
-            console.log('📅 Data carregada:', currentDate.toLocaleDateString());
-          }
-        }
-        
-        if (parsed.cardAtual !== undefined && parsed.cardAtual >= 0 && parsed.cardAtual < totalCards) {
-          cardAtual = parsed.cardAtual;
-        }
-        return true;
-      }
-    } catch (e) {
-      console.log('❌ Erro ao carregar dados:', e);
-    }
-    return false;
-  }
-
-  // ====== NAVEGAÇÃO CARDS ======
-  function mudarCard(direcao) {
-    const novoCard = cardAtual + direcao;
-    if (novoCard < 0 || novoCard >= totalCards) return;
-    cardAtual = novoCard;
-    document.getElementById('cardsSlider').style.transform = `translateX(-${cardAtual * 100}%)`;
-    atualizarIndicador();
-    atualizarBotoes();
-    atualizarInfo();
-    salvarDados();
-  }
-
-  function atualizarIndicador() {
-    document.querySelectorAll('.indicador span').forEach((dot, index) => {
-      dot.classList.toggle('active', index === cardAtual);
-    });
-  }
-
-  function atualizarBotoes() {
-    document.getElementById('btnPrev').disabled = cardAtual === 0;
-    document.getElementById('btnNext').disabled = cardAtual === totalCards - 1;
-  }
-
-  function atualizarInfo() {
-    const nomes = ['Turno A · Equipe 667', 'Turno B · Equipe 668', 'Turno C · Equipe 669'];
-    document.getElementById('infoTurno').textContent = nomes[cardAtual];
-  }
-
-  // ====== CONTROLE DE DIAS ======
-  function avancarDia() {
-    currentDate = new Date(currentDate);
-    currentDate.setDate(currentDate.getDate() + 1);
-    render();
-    salvarDados();
-  }
-
-  function irHoje() {
-    currentDate = new Date(2026, 6, 27);
-    render();
-    salvarDados();
-  }
-
-  // ====== CALENDÁRIO ======
-  function abrirCalendario(equipe, letra) {
-    equipeCalendario = equipe;
-    letraCalendario = letra;
-    document.getElementById('modalTitulo').textContent = `Turno ${letra} (${equipe})`;
-    document.getElementById('modalCalendario').classList.add('active');
-    document.getElementById('legendaDia').innerHTML = ICON_SUN + ' Dia';
-    document.getElementById('legendaNoite').innerHTML = ICON_MOON + ' Noite';
-    document.getElementById('legendaFolga').innerHTML = ICON_PAUSE + ' Folga';
-    renderCalendario();
-  }
-
-  function fecharCalendario() {
-    document.getElementById('modalCalendario').classList.remove('active');
-  }
-
-  function mudarMesCalendario(delta) {
-    mesCalendario = new Date(mesCalendario.getFullYear(), mesCalendario.getMonth() + delta, 1);
-    renderCalendario();
-  }
-
-  function renderCalendario() {
-    const grid = document.getElementById('calendarioGrid');
-    const ano = mesCalendario.getFullYear();
-    const mes = mesCalendario.getMonth();
-
-    document.getElementById('mesLabel').textContent = new Date(ano, mes).toLocaleDateString('pt-BR', {
-      month: 'long',
-      year: 'numeric'
-    });
-
-    const semana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const primeiroDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes + 1, 0);
-    const hoje = currentDate;
-
-    let html = semana.map(d => `<div class="cal-header">${d}</div>`).join('');
-
-    const offset = primeiroDia.getDay();
-    for (let i = 0; i < offset; i++) {
-      html += `<div class="cal-dia" style="opacity:0.3;"></div>`;
-    }
-
-    for (let d = 1; d <= ultimoDia.getDate(); d++) {
-      const data = new Date(ano, mes, d);
-      const isHoje = data.toDateString() === hoje.toDateString();
-
-      const status = getTurnoDia(equipeCalendario, data);
-      const icon = getIconStatus(status);
-      
-      let classe = 'cal-dia';
-      if (isHoje) classe += ' hoje';
-      
-      if (status === 0) classe += ' status-dia';
-      else if (status === 1) classe += ' status-noite';
-      else if (status === 2) classe += ' status-folga';
-
-      html += `
-        <div class="${classe}">
-          <div class="numero">${d}</div>
-          ${icon}
-        </div>
-      `;
-    }
-
-    grid.innerHTML = html;
-  }
-
-  // ====== O.S ======
-  function renderOS() {
-    const lista = document.getElementById('listaOS');
-    lista.innerHTML = ordensServico.map(os => `
-      <div class="item-os">
-        <div class="os-icon">${ICON_HOME}</div>
-        <div>
-          <div class="local">${os.local}</div>
-          <div class="os-codigo">O.S ${os.codigo}</div>
-          <div class="lotes">${os.lotes.map(l => `<span>${l}</span>`).join('')}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function abrirOS() {
-    renderOS();
-    document.getElementById('modalOS').classList.add('active');
-  }
-
-  function fecharOS() {
-    document.getElementById('modalOS').classList.remove('active');
-  }
-
-  // Fechar modais com ESC
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      fecharCalendario();
-      fecharOS();
-      fecharNoteModal();
-    }
-  });
-
-  // Fechar modais clicando fora
-  document.getElementById('modalCalendario').addEventListener('click', function (e) {
-    if (e.target === this) fecharCalendario();
-  });
-
-  document.getElementById('modalOS').addEventListener('click', function (e) {
-    if (e.target === this) fecharOS();
-  });
-
-  document.getElementById('modalNote').addEventListener('click', function (e) {
-    if (e.target === this) fecharNoteModal();
-  });
-
-  // ====== RENDERIZAR ======
-  function render() {
-    const date = currentDate;
-
-    document.getElementById('dataAtual').textContent = date.toLocaleDateString('pt-BR', {
-      day: '2-digit', month: 'short'
-    });
-
-    const turnos = [
-      { letra: 'A', statusId: 'statusA', listaId: 'listaA', cycleId: 'cycleA', labelsId: 'cycleLabelsA', equipe: 667 },
-      { letra: 'B', statusId: 'statusB', listaId: 'listaB', cycleId: 'cycleB', labelsId: 'cycleLabelsB', equipe: 668 },
-      { letra: 'C', statusId: 'statusC', listaId: 'listaC', cycleId: 'cycleC', labelsId: 'cycleLabelsC', equipe: 669 }
-    ];
-
-    const cicloLetras = ['D','D','N','N','F','F'];
-
-    turnos.forEach(({ statusId, listaId, cycleId, labelsId, equipe }) => {
-      const status = getTurnoDia(equipe, date);
-      const info = getStatusInfo(status);
-
-      const chip = document.getElementById(statusId);
-      if (chip) chip.innerHTML = info.icon + `<span>${info.label}</span>`;
-
-      const posAtual = getPosicaoCiclo(equipe, date);
-      const cycleEl = document.getElementById(cycleId);
-      const labelsEl = document.getElementById(labelsId);
-      if (cycleEl) {
-        cycleEl.innerHTML = CICLO.map((_, i) =>
-          `<div class="seg ${i === posAtual ? 'active' : ''}"></div>`
-        ).join('');
-      }
-      if (labelsEl) {
-        labelsEl.innerHTML = cicloLetras.map((l, i) =>
-          `<span class="${i === posAtual ? 'active-label' : ''}">${l}</span>`
-        ).join('');
-      }
-
-      const trabalhadores = workers.filter(w => w.equipe === equipe);
-      const lista = document.getElementById(listaId);
-
-      if (lista) {
-        if (trabalhadores.length === 0) {
-          lista.innerHTML = '<div class="trabalhador-item" style="color:var(--text-faint);justify-content:center;">Nenhum trabalhador</div>';
-        } else {
-          const isTrabalho = status === 0 || status === 1;
-          lista.innerHTML = trabalhadores.map(w => `
-            <div class="trabalhador-item">
-              <span class="who">${ICON_USER}${w.nome}</span>
-              <span class="matricula">${w.matricula}</span>
-              <span class="status-dot ${isTrabalho ? 'presente' : 'folga'}"></span>
+    <div class="indicador-salvamento" id="indicadorSalvamento">💾 Dados salvos</div>
+
+    <!-- Modal para criar local -->
+    <div class="modal-overlay" id="modalCriarLocal">
+        <div class="modal">
+            <h2>Novo Local</h2>
+            <label>Nome do Local</label>
+            <input type="text" id="inputNomeLocal" placeholder="Ex: Escritorio Central">
+            <label>Código O.S.</label>
+            <input type="text" id="inputOSLocal" placeholder="Ex: OS-2026-004">
+            <div class="modal-botoes">
+                <button class="btn-cancelar" onclick="fecharModalCriarLocal()">Cancelar</button>
+                <button class="btn-salvar" onclick="criarLocal()">Criar</button>
             </div>
-          `).join('');
+        </div>
+    </div>
+
+    <!-- Modal para adicionar pessoa com turno -->
+    <div class="modal-overlay" id="modalAdicionarPessoa">
+        <div class="modal modal-pequeno">
+            <h2>👤 Adicionar Trabalhador</h2>
+            <label>Nome do Trabalhador</label>
+            <input type="text" id="inputNomePessoa" placeholder="Ex: João Silva">
+            <label>Matrícula</label>
+            <input type="text" id="inputMatriculaPessoa" placeholder="Ex: 4521-7">
+            <label>Turno (Horário)</label>
+            <select id="selectTurnoPessoa">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+            <div class="modal-botoes">
+                <button class="btn-cancelar" onclick="fecharModalAdicionarPessoa()">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarPessoa()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar turno -->
+    <div class="modal-overlay" id="modalEditarTurno">
+        <div class="modal modal-pequeno">
+            <h2>🔄 Editar Turno</h2>
+            <label>Selecione o novo turno</label>
+            <select id="selectTurnoEditar">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+            <div class="modal-botoes">
+                <button class="btn-cancelar" onclick="fecharModalEditarTurno()">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarEdicaoTurno()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar aviso -->
+    <div class="modal-overlay" id="modalEditarAviso">
+        <div class="modal">
+            <h2>✏️ Editar Aviso de Transferência</h2>
+            <label>Texto do aviso</label>
+            <input type="text" id="inputTextoAviso" placeholder="Ex: Transferência para turma 667 na data 15/08/2026">
+            <div class="modal-botoes">
+                <button class="btn-cancelar" onclick="fecharModalEditarAviso()">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarAviso()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup para exibir aviso -->
+    <div class="popup-aviso-overlay" id="popupAviso">
+        <div class="popup-aviso">
+            <span class="icone-aviso">⚠️</span>
+            <h3>Aviso de Transferência</h3>
+            <div class="detalhes-pessoa" id="popupDetalhesPessoa"></div>
+            <div class="conteudo-aviso" id="popupConteudoAviso"></div>
+            <div class="botoes-popup">
+                <button class="btn-editar-popup" onclick="popupEditarAviso()">✏️ Editar</button>
+                <button class="btn-excluir-aviso-popup" onclick="popupExcluirAviso()">🗑️ Excluir</button>
+                <button class="btn-fechar-popup" onclick="fecharPopupAviso()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let contadorLocal = 0;
+        let locais = [];
+        let avisoEditando = null;
+        let turnoEditando = null;
+        let localIndexAdicionando = null;
+
+        // Variáveis para controle do popup
+        let popupLocalIndex = null;
+        let popupPessoaIndex = null;
+
+        const CHAVE_SALVAMENTO = 'sistemaLocais_4x2_dados';
+
+        function salvarDados(mostrarIndicador) {
+            try {
+                localStorage.setItem(CHAVE_SALVAMENTO, JSON.stringify({
+                    contadorLocal: contadorLocal,
+                    locais: locais
+                }));
+                if (mostrarIndicador) {
+                    exibirIndicadorSalvamento();
+                }
+            } catch (erro) {
+                console.error('Não foi possível salvar os dados:', erro);
+            }
         }
-      }
-    });
 
-    if (document.getElementById('modalCalendario').classList.contains('active')) {
-      renderCalendario();
-    }
-
-    atualizarDisplayNota();
-    atualizarBotaoAlarme();
-    
-    document.getElementById('cardsSlider').style.transform = `translateX(-${cardAtual * 100}%)`;
-    atualizarIndicador();
-    atualizarBotoes();
-    atualizarInfo();
-  }
-
-  // ====== EVENTOS ======
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft') mudarCard(-1);
-    if (e.key === 'ArrowRight') mudarCard(1);
-    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') avancarDia();
-  });
-
-  // ====== INICIALIZAR ======
-  function init() {
-    console.log('🚀 Inicializando aplicação...');
-    
-    // Carregar tema
-    const temaSalvo = localStorage.getItem('temaEscuro');
-    if (temaSalvo === 'true') {
-      temaEscuro = true;
-      document.documentElement.setAttribute('data-theme', 'dark');
-      document.getElementById('themeIcon').innerHTML = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>';
-    }
-
-    // Carregar dados salvos
-    const dadosCarregados = carregarDados();
-    console.log('📊 Dados carregados?', dadosCarregados);
-    
-    // Renderizar
-    render();
-    
-    // Se não tinha dados salvos, salva o estado inicial
-    if (!dadosCarregados) {
-      console.log('💾 Salvando estado inicial...');
-      salvarDados();
-    }
-
-    // Salvar dados periodicamente
-    setInterval(() => {
-      salvarDados();
-      atualizarDisplayNota();
-    }, 30000);
-
-    // Verificar alarme a cada minuto
-    setInterval(() => {
-      if (notaData.alarmeAtivo && notaData.ultimoToque) {
-        const prox = notaData.ultimoToque + (notaData.intervaloHoras * 60 * 60 * 1000);
-        if (Date.now() >= prox) {
-          notificarAlarme();
-          notaData.ultimoToque = Date.now();
-          salvarDados();
-          iniciarAlarme();
+        function exibirIndicadorSalvamento() {
+            const indicador = document.getElementById('indicadorSalvamento');
+            if (!indicador) return;
+            indicador.classList.add('mostrar');
+            clearTimeout(exibirIndicadorSalvamento._timeout);
+            exibirIndicadorSalvamento._timeout = setTimeout(() => {
+                indicador.classList.remove('mostrar');
+            }, 1800);
         }
-      }
-      atualizarDisplayNota();
-    }, 60000);
-  }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-</script>
+        function carregarDados() {
+            try {
+                const dadosSalvos = localStorage.getItem(CHAVE_SALVAMENTO);
+                if (!dadosSalvos) return false;
+
+                const dados = JSON.parse(dadosSalvos);
+                if (!dados || !Array.isArray(dados.locais)) return false;
+
+                locais = dados.locais;
+                contadorLocal = Number.isFinite(dados.contadorLocal)
+                    ? dados.contadorLocal
+                    : locais.reduce((maior, local) => Math.max(maior, Number(local.id) || 0), 0) + 1;
+
+                return true;
+            } catch (erro) {
+                console.error('Não foi possível carregar os dados salvos:', erro);
+                return false;
+            }
+        }
+
+        function calcularTurnosParaData() {
+            const agora = new Date();
+            const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+
+            const dataBase = new Date(2026, 6, 30);
+
+            const diffDias = Math.round((hoje - dataBase) / (1000 * 60 * 60 * 24));
+            const ciclo = ((diffDias % 6) + 6) % 6;
+
+            function getTurno(posicao) {
+                if (posicao === 0 || posicao === 1) {
+                    return { turno: 'Dia', classe: 'turno-dia' };
+                } else if (posicao === 2 || posicao === 3) {
+                    return { turno: 'Noite', classe: 'turno-noite' };
+                } else {
+                    return { turno: 'Folga', classe: 'turno-folga' };
+                }
+            }
+
+            const posicaoA = (ciclo + 5) % 6;
+            const posicaoB = (ciclo + 1) % 6;
+            const posicaoC = (ciclo + 3) % 6;
+
+            return {
+                A: getTurno(posicaoA),
+                B: getTurno(posicaoB),
+                C: getTurno(posicaoC),
+                data: hoje
+            };
+        }
+
+        function excluirLocal(index) {
+            if (index < 0 || index >= locais.length) return;
+            locais.splice(index, 1);
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        function excluirPessoa(localIndex, pessoaIndex) {
+            if (
+                localIndex < 0 ||
+                localIndex >= locais.length ||
+                pessoaIndex < 0 ||
+                pessoaIndex >= locais[localIndex].pessoas.length
+            ) return;
+
+            locais[localIndex].pessoas.splice(pessoaIndex, 1);
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        function abrirModalAdicionarPessoa(localIndex) {
+            localIndexAdicionando = localIndex;
+            document.getElementById('inputNomePessoa').value = '';
+            document.getElementById('inputMatriculaPessoa').value = '';
+            document.getElementById('selectTurnoPessoa').value = 'A';
+            document.getElementById('modalAdicionarPessoa').classList.add('ativo');
+        }
+
+        function fecharModalAdicionarPessoa() {
+            document.getElementById('modalAdicionarPessoa').classList.remove('ativo');
+            localIndexAdicionando = null;
+        }
+
+        function salvarPessoa() {
+            if (localIndexAdicionando === null) return;
+            
+            const nome = document.getElementById('inputNomePessoa').value.trim();
+            const matricula = document.getElementById('inputMatriculaPessoa').value.trim();
+            const turno = document.getElementById('selectTurnoPessoa').value;
+
+            if (!nome || !matricula) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            locais[localIndexAdicionando].pessoas.push({
+                nome: nome,
+                matricula: matricula,
+                turno: turno,
+                aviso: ''
+            });
+
+            fecharModalAdicionarPessoa();
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        function abrirModalEditarTurno(localIndex, pessoaIndex) {
+            turnoEditando = { localIndex, pessoaIndex };
+            const pessoa = locais[localIndex].pessoas[pessoaIndex];
+            document.getElementById('selectTurnoEditar').value = pessoa.turno || 'A';
+            document.getElementById('modalEditarTurno').classList.add('ativo');
+        }
+
+        function fecharModalEditarTurno() {
+            document.getElementById('modalEditarTurno').classList.remove('ativo');
+            turnoEditando = null;
+        }
+
+        function salvarEdicaoTurno() {
+            if (!turnoEditando) return;
+            const { localIndex, pessoaIndex } = turnoEditando;
+            const novoTurno = document.getElementById('selectTurnoEditar').value;
+            locais[localIndex].pessoas[pessoaIndex].turno = novoTurno;
+            fecharModalEditarTurno();
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        function toggleLocal(index) {
+            locais[index].expandido = !locais[index].expandido;
+            salvarDados();
+            renderizarLocais();
+        }
+
+        function abrirModalEditarAviso(localIndex, pessoaIndex) {
+            avisoEditando = { localIndex, pessoaIndex };
+            const pessoa = locais[localIndex].pessoas[pessoaIndex];
+            document.getElementById('inputTextoAviso').value = pessoa.aviso || '';
+            document.getElementById('modalEditarAviso').classList.add('ativo');
+        }
+
+        function fecharModalEditarAviso() {
+            document.getElementById('modalEditarAviso').classList.remove('ativo');
+            avisoEditando = null;
+        }
+
+        function salvarAviso() {
+            if (!avisoEditando) return;
+            const { localIndex, pessoaIndex } = avisoEditando;
+            const texto = document.getElementById('inputTextoAviso').value.trim();
+            locais[localIndex].pessoas[pessoaIndex].aviso = texto;
+            fecharModalEditarAviso();
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        function excluirAviso(localIndex, pessoaIndex) {
+            if (
+                localIndex < 0 ||
+                localIndex >= locais.length ||
+                pessoaIndex < 0 ||
+                pessoaIndex >= locais[localIndex].pessoas.length
+            ) return;
+
+            locais[localIndex].pessoas[pessoaIndex].aviso = '';
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        // ===== FUNÇÕES DO POPUP DE AVISO =====
+        function abrirPopupAviso(localIndex, pessoaIndex) {
+            const pessoa = locais[localIndex].pessoas[pessoaIndex];
+            const local = locais[localIndex];
+            
+            popupLocalIndex = localIndex;
+            popupPessoaIndex = pessoaIndex;
+
+            // Preenche os detalhes
+            document.getElementById('popupDetalhesPessoa').textContent = 
+                `👤 ${pessoa.nome} · Matrícula: ${pessoa.matricula} · Local: ${local.nome}`;
+
+            const conteudo = document.getElementById('popupConteudoAviso');
+            if (pessoa.aviso && pessoa.aviso.trim() !== '') {
+                conteudo.textContent = pessoa.aviso;
+                conteudo.className = 'conteudo-aviso';
+            } else {
+                conteudo.textContent = 'Nenhum aviso cadastrado para este trabalhador.';
+                conteudo.className = 'conteudo-aviso vazio';
+            }
+
+            document.getElementById('popupAviso').classList.add('ativo');
+        }
+
+        function fecharPopupAviso() {
+            document.getElementById('popupAviso').classList.remove('ativo');
+            popupLocalIndex = null;
+            popupPessoaIndex = null;
+        }
+
+        function popupEditarAviso() {
+            if (popupLocalIndex === null || popupPessoaIndex === null) {
+                alert('Erro: Nenhum aviso selecionado para editar.');
+                return;
+            }
+            fecharPopupAviso();
+            // Pequeno delay para garantir que o popup fechou antes de abrir o modal
+            setTimeout(() => {
+                abrirModalEditarAviso(popupLocalIndex, popupPessoaIndex);
+            }, 100);
+        }
+
+        function popupExcluirAviso() {
+            if (popupLocalIndex === null || popupPessoaIndex === null) {
+                alert('Erro: Nenhum aviso selecionado para excluir.');
+                return;
+            }
+            
+            // Confirmação antes de excluir
+            if (confirm('Tem certeza que deseja excluir este aviso?')) {
+                excluirAviso(popupLocalIndex, popupPessoaIndex);
+                fecharPopupAviso();
+                // Mostra indicador de salvamento
+                exibirIndicadorSalvamento();
+            }
+        }
+
+        // Fecha o popup ao clicar no overlay
+        document.addEventListener('click', function(e) {
+            const popup = document.getElementById('popupAviso');
+            if (e.target === popup) {
+                fecharPopupAviso();
+            }
+        });
+
+        // Fecha o popup com a tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                fecharPopupAviso();
+            }
+        });
+
+        function renderizarLocais() {
+            const grid = document.getElementById('locaisGrid');
+            grid.innerHTML = '';
+
+            if (locais.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: white; border-radius: 12px; border: 2px dashed #d1d9e6;">
+                        <p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 1rem;">📋 Nenhum local cadastrado</p>
+                        <p style="color: #cbd5e1;">Clique em "Criar Novo Local" para começar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            locais.forEach((local, index) => {
+                const card = document.createElement('div');
+                card.className = 'card-local';
+                card.id = `local-${index}`;
+
+                const header = document.createElement('div');
+                header.className = 'card-header';
+                header.setAttribute('data-index', index);
+                header.onclick = function(e) {
+                    if (e.target.classList.contains('btn-excluir-local') || 
+                        e.target.classList.contains('btn-excluir-pessoa') ||
+                        e.target.classList.contains('btn-aviso') ||
+                        e.target.classList.contains('btn-editar-turno') ||
+                        e.target.closest('.btn-excluir-local') ||
+                        e.target.closest('.btn-excluir-pessoa') ||
+                        e.target.closest('.btn-aviso') ||
+                        e.target.closest('.btn-editar-turno') ||
+                        e.target.closest('.aviso-wrapper')) {
+                        return;
+                    }
+                    toggleLocal(index);
+                };
+
+                const titulo = document.createElement('span');
+                titulo.className = 'local-titulo';
+                titulo.textContent = local.nome;
+
+                const codigo = document.createElement('span');
+                codigo.className = 'codigo-os';
+                codigo.textContent = local.os;
+
+                const dataSpan = document.createElement('span');
+                dataSpan.className = 'data-atual-local';
+                const hoje = new Date();
+                dataSpan.textContent = hoje.toLocaleDateString('pt-BR');
+
+                const btnExcluirLocal = document.createElement('button');
+                btnExcluirLocal.className = 'btn-excluir-local';
+                btnExcluirLocal.innerHTML = '✕';
+                btnExcluirLocal.onclick = function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    excluirLocal(index);
+                };
+
+                header.appendChild(titulo);
+                header.appendChild(codigo);
+                header.appendChild(dataSpan);
+                header.appendChild(btnExcluirLocal);
+
+                const tabela = document.createElement('div');
+                tabela.className = 'tabela-local';
+
+                const cabecalho = document.createElement('div');
+                cabecalho.className = 'linha-cabecalho-local';
+                if (!local.expandido) cabecalho.classList.add('oculto');
+                cabecalho.innerHTML = `
+                    <span>Nome</span>
+                    <span>Matricula</span>
+                    <span>Turno</span>
+                    <span>Horário</span>
+                    <span>Aviso</span>
+                    <span></span>
+                `;
+                tabela.appendChild(cabecalho);
+
+                const turnos = calcularTurnosParaData();
+
+                if (local.pessoas.length === 0) {
+                    const linhaVazia = document.createElement('div');
+                    linhaVazia.className = 'linha-dado-local';
+                    if (!local.expandido) linhaVazia.classList.add('oculto');
+                    linhaVazia.style.gridColumn = '1 / -1';
+                    linhaVazia.style.textAlign = 'center';
+                    linhaVazia.style.color = '#94a3b8';
+                    linhaVazia.style.padding = '1.5rem';
+                    linhaVazia.textContent = 'Nenhum trabalhador cadastrado';
+                    tabela.appendChild(linhaVazia);
+                } else {
+                    local.pessoas.forEach((pessoa, pIndex) => {
+                        const linha = document.createElement('div');
+                        linha.className = 'linha-dado-local';
+                        if (!local.expandido) linha.classList.add('oculto');
+
+                        const turnoLetra = pessoa.turno || 'A';
+                        let turnoInfo;
+                        if (turnoLetra === 'A') turnoInfo = turnos.A;
+                        else if (turnoLetra === 'B') turnoInfo = turnos.B;
+                        else turnoInfo = turnos.C;
+
+                        const nomeSpan = document.createElement('span');
+                        nomeSpan.className = 'nome-pessoa';
+                        nomeSpan.textContent = pessoa.nome;
+
+                        const matriculaSpan = document.createElement('span');
+                        matriculaSpan.className = 'matricula-pessoa';
+                        matriculaSpan.textContent = pessoa.matricula;
+
+                        const turnoSpan = document.createElement('span');
+                        turnoSpan.className = `turno-display turno-${turnoLetra}`;
+                        turnoSpan.textContent = turnoLetra;
+                        turnoSpan.style.cursor = 'pointer';
+                        turnoSpan.title = 'Clique para editar o turno';
+                        turnoSpan.onclick = function(e) {
+                            e.stopPropagation();
+                            abrirModalEditarTurno(index, pIndex);
+                        };
+
+                        const horarioSpan = document.createElement('span');
+                        horarioSpan.className = 'horario-display';
+                        horarioSpan.textContent = turnoInfo.turno;
+
+                        // Wrapper para o botão de aviso com tooltip
+                        const avisoWrapper = document.createElement('span');
+                        avisoWrapper.className = 'aviso-wrapper';
+
+                        const temAviso = pessoa.aviso && pessoa.aviso.trim() !== '';
+
+                        const btnAviso = document.createElement('button');
+                        btnAviso.className = 'btn-aviso';
+                        if (temAviso) {
+                            btnAviso.classList.add('ativo');
+                        }
+                        btnAviso.innerHTML = '⚠';
+                        btnAviso.title = temAviso ? 'Clique para ver o aviso' : 'Clique para adicionar aviso';
+
+                        // Tooltip (bolha de pensamento) - mantido para compatibilidade
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'tooltip-aviso';
+
+                        if (temAviso) {
+                            tooltip.setAttribute('data-tem-aviso', 'true');
+
+                            const textoAviso = document.createElement('div');
+                            textoAviso.className = 'tooltip-aviso-texto';
+                            textoAviso.textContent = pessoa.aviso;
+                            tooltip.appendChild(textoAviso);
+
+                            const btnExcluirAviso = document.createElement('button');
+                            btnExcluirAviso.className = 'btn-excluir-aviso';
+                            btnExcluirAviso.textContent = '🗑 Excluir aviso';
+                            btnExcluirAviso.onclick = function(e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                if (confirm('Tem certeza que deseja excluir este aviso?')) {
+                                    excluirAviso(index, pIndex);
+                                }
+                            };
+                            tooltip.appendChild(btnExcluirAviso);
+
+                            // Passar o mouse mostra a bolha (desktop)
+                            avisoWrapper.addEventListener('mouseenter', function() {
+                                tooltip.classList.add('mostrar');
+                            });
+                            avisoWrapper.addEventListener('mouseleave', function() {
+                                tooltip.classList.remove('mostrar');
+                            });
+
+                            // CLIQUE: abre o POPUP com o aviso
+                            btnAviso.onclick = function(e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                abrirPopupAviso(index, pIndex);
+                            };
+
+                            // Duplo clique abre o modal para editar o texto do aviso
+                            btnAviso.addEventListener('dblclick', function(e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                abrirModalEditarAviso(index, pIndex);
+                            });
+                        } else {
+                            tooltip.textContent = 'Nenhum aviso cadastrado';
+                            tooltip.style.background = '#f1f5f9';
+                            tooltip.style.borderColor = '#94a3b8';
+                            tooltip.style.color = '#475569';
+
+                            // Sem aviso: clique abre o modal para cadastrar
+                            btnAviso.onclick = function(e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                abrirModalEditarAviso(index, pIndex);
+                            };
+                        }
+
+                        avisoWrapper.appendChild(btnAviso);
+                        avisoWrapper.appendChild(tooltip);
+
+                        const btnExcluirPessoa = document.createElement('button');
+                        btnExcluirPessoa.className = 'btn-excluir-pessoa';
+                        btnExcluirPessoa.innerHTML = '✕';
+                        btnExcluirPessoa.onclick = function(e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            excluirPessoa(index, pIndex);
+                        };
+
+                        linha.appendChild(nomeSpan);
+                        linha.appendChild(matriculaSpan);
+                        linha.appendChild(turnoSpan);
+                        linha.appendChild(horarioSpan);
+                        linha.appendChild(avisoWrapper);
+                        linha.appendChild(btnExcluirPessoa);
+
+                        tabela.appendChild(linha);
+                    });
+                }
+
+                const btnAdd = document.createElement('div');
+                btnAdd.className = 'btn-adicionar-pessoa';
+                if (!local.expandido) btnAdd.style.display = 'none';
+                btnAdd.textContent = '+ Adicionar Trabalhador';
+                btnAdd.onclick = function(e) {
+                    e.stopPropagation();
+                    abrirModalAdicionarPessoa(index);
+                };
+                tabela.appendChild(btnAdd);
+
+                card.appendChild(header);
+                card.appendChild(tabela);
+                grid.appendChild(card);
+            });
+        }
+
+        function abrirModalCriarLocal() {
+            document.getElementById('modalCriarLocal').classList.add('ativo');
+            document.getElementById('inputNomeLocal').value = '';
+            document.getElementById('inputOSLocal').value = '';
+        }
+
+        function fecharModalCriarLocal() {
+            document.getElementById('modalCriarLocal').classList.remove('ativo');
+        }
+
+        function criarLocal() {
+            const nome = document.getElementById('inputNomeLocal').value.trim();
+            const os = document.getElementById('inputOSLocal').value.trim();
+
+            if (!nome || !os) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            locais.push({
+                id: contadorLocal++,
+                nome: nome,
+                os: os,
+                expandido: false,
+                pessoas: []
+            });
+
+            fecharModalCriarLocal();
+            salvarDados(true);
+            renderizarLocais();
+        }
+
+        // Mostra periodicamente (a cada 15s) a bolha de aviso de quem tem aviso cadastrado
+        function mostrarAvisosPeriodicamente() {
+            const tooltips = document.querySelectorAll('.tooltip-aviso[data-tem-aviso="true"]');
+            if (tooltips.length === 0) return;
+
+            tooltips.forEach(tooltip => {
+                tooltip.classList.add('mostrar');
+                const btn = tooltip.parentElement ? tooltip.parentElement.querySelector('.btn-aviso') : null;
+                if (btn) {
+                    btn.classList.remove('pulsando');
+                    void btn.offsetWidth;
+                    btn.classList.add('pulsando');
+                }
+            });
+
+            setTimeout(() => {
+                tooltips.forEach(tooltip => tooltip.classList.remove('mostrar'));
+            }, 3500);
+        }
+
+        function iniciarSalvamentoAutomatico() {
+            setInterval(function() {
+                salvarDados();
+            }, 20000);
+
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'hidden') {
+                    salvarDados();
+                }
+            });
+
+            window.addEventListener('blur', salvarDados);
+
+            window.addEventListener('beforeunload', function() {
+                salvarDados();
+            });
+
+            window.addEventListener('pagehide', function() {
+                salvarDados();
+            });
+        }
+
+        window.onload = function() {
+            const carregou = carregarDados();
+
+            if (!carregou) {
+                locais = [];
+                contadorLocal = 0;
+                salvarDados();
+            }
+
+            renderizarLocais();
+            iniciarSalvamentoAutomatico();
+
+            setInterval(mostrarAvisosPeriodicamente, 15000);
+        };
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('ativo');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
